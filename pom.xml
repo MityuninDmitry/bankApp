@@ -15,6 +15,13 @@
 	<modules>
 		<module>FrontUI</module>
 		<module>Accounts</module>
+		<module>Cash</module>
+		<module>Transfer</module>
+		<module>Exchange</module>
+		<module>ExchangeGenerator</module>
+		<module>Blocker</module>
+		<module>Blocker</module>
+		<module>Notifications</module>
 	</modules>
 	<name>bankApp</name>
 	<description>Demo project for Spring Boot</description>

@@ -1,0 +1,5 @@
+server:
+  port: ${SERVER_PORT:8087}
+spring:
+  application:
+    name: Blocker

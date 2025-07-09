@@ -13,17 +13,37 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="Exchange" />
+        <module name="ExchangeGenerator" />
+        <module name="FrontUI" />
+        <module name="Transfer" />
+        <module name="Blocker" />
+        <module name="Cash" />
+        <module name="Accounts" />
+      </profile>
+      <profile name="Annotation profile for Notifications" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
-        <module name="FrontUI" />
-        <module name="Accounts" />
+        <module name="Notifications" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Accounts" options="-parameters" />
+      <module name="Blocker" options="-parameters" />
+      <module name="Cash" options="-parameters" />
+      <module name="Exchange" options="-parameters" />
+      <module name="ExchangeGenerator" options="-parameters" />
       <module name="FrontUI" options="-parameters" />
+      <module name="Notifications" options="-parameters" />
+      <module name="Transfer" options="-parameters" />
       <module name="bankApp" options="-parameters" />
     </option>
   </component>
