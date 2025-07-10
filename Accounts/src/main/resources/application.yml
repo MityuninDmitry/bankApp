@@ -7,6 +7,7 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,6 +15,10 @@ spring:
     properties:
       hibernate:
         default_schema: accounts
+        format_sql: true
+        hbm2ddl.schema-generation.scripts.action: create
+        hbm2ddl.schema-generation.scripts.create-target: init.sql
+        hbm2ddl.schema-generation.scripts.create-source: metadata
 management:
   endpoints:
     web:
