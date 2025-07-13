@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.mityunin.dto.AuthRequest;
 import ru.mityunin.dto.UserDto;
+import ru.mityunin.dto.UserRegistrationRequest;
 
 @Service
 public class AccountsService {
@@ -62,6 +63,28 @@ public class AccountsService {
             return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
         } catch (Exception e) {
             log.error("Failed to get user by login: {}", login, e);
+            return null;
+        }
+    }
+
+    public UserDto registerUser(UserRegistrationRequest registrationRequest) {
+        log.info("Registering new user: {}", registrationRequest.getLogin());
+        String url = accountsServiceUrl + "/accounts/register";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            ResponseEntity<UserDto> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    new HttpEntity<>(registrationRequest, headers),
+                    UserDto.class
+            );
+
+            return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
+        } catch (Exception e) {
+            log.error("Registration failed for user: {}", registrationRequest.getLogin(), e);
             return null;
         }
     }

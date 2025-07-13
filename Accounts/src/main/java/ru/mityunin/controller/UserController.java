@@ -38,7 +38,7 @@ public class UserController {
     public ResponseEntity<UserDto> registerUser(@RequestBody UserRegistrationRequest request) {
         // Проверяем, не существует ли уже пользователь с таким логином
         if (userService.findByLogin(request.getLogin()) != null) {
-            return ResponseEntity.badRequest().build(); // или более информативный ответ
+            return ResponseEntity.badRequest().build();
         }
 
         User user = userMapper.registrationRequestToUser(request);

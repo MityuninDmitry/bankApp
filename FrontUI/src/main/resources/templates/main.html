@@ -6,7 +6,11 @@
 </head>
 <body>
 <h2>Welcome to Bank App</h2>
-
+<div>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
 <!-- Подключаем фрагмент с профилем -->
 <div th:replace="~{fragments/user-profile :: userProfile(${userDto})}"></div>
 
