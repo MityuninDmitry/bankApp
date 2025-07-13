@@ -20,6 +20,23 @@
     <span th:if="${userDto.birthDate != null}" th:text="${#temporals.format(userDto.birthDate, 'dd.MM.yyyy')}"></span>
     <span th:unless="${userDto.birthDate != null}">Not specified</span>
   </p>
+
+  <!-- Форма для изменения пароля -->
+  <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
+    <h4>Change Password</h4>
+    <form th:action="@{/update/password}" method="post">
+      <input type="hidden" name="login" th:value="${userDto.login}">
+      <div style="margin-bottom: 10px;">
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required style="padding: 5px; width: 200px;">
+      </div>
+      <button type="submit" style="color: white; background-color: #4CAF50; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+        Update Password
+      </button>
+      <span th:if="${passwordUpdated}" style="color: green; margin-left: 10px;">Password updated successfully!</span>
+      <span th:if="${passwordError}" style="color: red; margin-left: 10px;" th:text="${passwordError}"></span>
+    </form>
+  </div>
 </div>
 
 <div th:fragment="notAuthenticated" th:if="${userDto == null}">

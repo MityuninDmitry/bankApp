@@ -72,4 +72,11 @@ public class UserController {
 
         return ResponseEntity.ok("Success user deletion by login");
     }
+
+    @PostMapping("/update/password")
+    public  ResponseEntity<String> updateUserPassword(@RequestBody AuthRequest authRequest) {
+        log.info("Update User Password request for: {}", authRequest.getLogin());
+        userService.updateUserPassword(authRequest);
+        return ResponseEntity.ok("Password updated");
+    }
 }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.mityunin.dto.AuthRequest;
 import ru.mityunin.model.User;
 import ru.mityunin.repository.UserRepository;
 
@@ -42,6 +43,14 @@ public class UserService {
         User user = findByLogin(login);
         if (user != null) {
             userRepository.delete(user);
+        }
+    }
+
+    public void updateUserPassword(AuthRequest authRequest) {
+        User user = userRepository.findByLogin(authRequest.getLogin()).get();
+        if (user != null) {
+            user.setPassword(authRequest.getPassword());
+            saveUser(user);
         }
     }
 }

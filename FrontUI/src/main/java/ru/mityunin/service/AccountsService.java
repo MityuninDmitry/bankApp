@@ -110,4 +110,26 @@ public class AccountsService {
             return false;
         }
     }
+
+    public boolean updatePassword(AuthRequest authRequest) {
+        log.info("Updating password for user: {}", authRequest.getLogin());
+        String url = accountsServiceUrl + "/accounts/update/password";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    new HttpEntity<>(authRequest, headers),
+                    String.class
+            );
+
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            log.error("Failed to update password for user: {}", authRequest.getLogin(), e);
+            return false;
+        }
+    }
 }
