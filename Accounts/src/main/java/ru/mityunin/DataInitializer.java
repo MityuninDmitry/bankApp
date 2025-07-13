@@ -16,6 +16,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (userService.findByLogin("testUser") != null) {
+            return;
+        }
         User user = new User();
         user.setLogin("testUser");
         user.setPassword("password123");

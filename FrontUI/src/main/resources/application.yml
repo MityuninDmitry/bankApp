@@ -3,3 +3,14 @@ server:
 spring:
   application:
     name: FrontUI
+  thymeleaf:
+    cache: false
+accounts:
+  service:
+    url: http://accounts-service:8082
+logging:
+  level:
+    root: INFO
+  org:
+    springframework: DEBUG
+    boot: DEBUG
