@@ -58,4 +58,18 @@ public class UserController {
 
         return ResponseEntity.ok(userMapper.userToUserDto(user));
     }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteUser(@RequestBody String login) {
+        log.info("Delete request for: {}", login);
+        User user = userService.findByLogin(login);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        userService.deleteUser(login);
+
+        return ResponseEntity.ok("Success user deletion by login");
+    }
 }

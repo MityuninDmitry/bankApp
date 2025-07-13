@@ -88,4 +88,26 @@ public class AccountsService {
             return null;
         }
     }
+
+    public boolean deleteUser(String login) {
+        log.info("Deleting user: {}", login);
+        String url = accountsServiceUrl + "/accounts/delete";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    new HttpEntity<>(login, headers),
+                    String.class
+            );
+
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            log.error("Failed to delete user: {}", login, e);
+            return false;
+        }
+    }
 }

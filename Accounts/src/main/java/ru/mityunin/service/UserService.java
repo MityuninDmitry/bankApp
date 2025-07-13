@@ -37,4 +37,11 @@ public class UserService {
 
         return result;
     }
+
+    public void deleteUser(String login) {
+        User user = findByLogin(login);
+        if (user != null) {
+            userRepository.delete(user);
+        }
+    }
 }

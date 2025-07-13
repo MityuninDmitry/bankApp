@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.dto.UserRegistrationRequest;
 import ru.mityunin.service.AccountsService;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Controller
+@RequestMapping("/register")
 public class RegisterController {
     private final AccountsService accountsService;
     private final UserDetailsService userDetailsService;
@@ -33,13 +35,13 @@ public class RegisterController {
         this.userDetailsService = userDetailsService;
     }
 
-    @GetMapping("/register")
+    @GetMapping()
     public String showRegistrationForm(Model model) {
         model.addAttribute("registrationRequest", new UserRegistrationRequest());
         return "register";
     }
 
-    @PostMapping("/register")
+    @PostMapping()
     public String registerUser(
             @Valid @ModelAttribute("registrationRequest") UserRegistrationRequest registrationRequest,
             BindingResult bindingResult,

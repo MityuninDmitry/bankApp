@@ -4,7 +4,15 @@
 <!-- Блок с информацией о пользователе -->
 <div th:fragment="userProfile(userDto)" th:if="${userDto != null}" style="border: 1px solid black; padding: 10px; margin: 10px 0;">
   <h3>User Profile</h3>
-  <p><strong>Login:</strong> <span th:text="${userDto.login}"></span></p>
+  <p>
+    <strong>Login:</strong>
+    <span th:text="${userDto.login}"></span>
+  <form th:action="@{/delete}" method="post" style="display: inline;">
+    <button type="submit" style="margin-left: 10px; color: white; background-color: #f44336; border: none; padding: 2px 5px; border-radius: 3px; cursor: pointer;">
+      Delete Account
+    </button>
+  </form>
+  </p>
   <p><strong>First Name:</strong> <span th:text="${userDto.firstName} ?: 'Not specified'"></span></p>
   <p><strong>Last Name:</strong> <span th:text="${userDto.lastName} ?: 'Not specified'"></span></p>
   <p><strong>Email:</strong> <span th:text="${userDto.email} ?: 'Not specified'"></span></p>
