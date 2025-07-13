@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bank app</title>
+</head>
+<body>
+<h2>Welcome to Bank App</h2>
+
+<!-- Подключаем фрагмент с профилем -->
+<div th:replace="~{fragments/user-profile :: userProfile(${userDto})}"></div>
+
+<!-- Или альтернативный вариант для неаутентифицированных пользователей -->
+<div th:replace="~{fragments/user-profile :: notAuthenticated}"></div>
+</body>
+</html>

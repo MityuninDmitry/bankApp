@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Блок с информацией о пользователе -->
+<div th:fragment="userProfile(userDto)" th:if="${userDto != null}" style="border: 1px solid black; padding: 10px; margin: 10px 0;">
+  <h3>User Profile</h3>
+  <p><strong>Login:</strong> <span th:text="${userDto.login}"></span></p>
+  <p><strong>First Name:</strong> <span th:text="${userDto.firstName} ?: 'Not specified'"></span></p>
+  <p><strong>Last Name:</strong> <span th:text="${userDto.lastName} ?: 'Not specified'"></span></p>
+  <p><strong>Email:</strong> <span th:text="${userDto.email} ?: 'Not specified'"></span></p>
+  <p><strong>Birth Date:</strong>
+    <span th:if="${userDto.birthDate != null}" th:text="${#temporals.format(userDto.birthDate, 'dd.MM.yyyy')}"></span>
+    <span th:unless="${userDto.birthDate != null}">Not specified</span>
+  </p>
+</div>
+
+<div th:fragment="notAuthenticated" th:if="${userDto == null}">
+  <p>Please <a href="/login">log in</a> to view your profile.</p>
+</div>
+</body>
+</html>
