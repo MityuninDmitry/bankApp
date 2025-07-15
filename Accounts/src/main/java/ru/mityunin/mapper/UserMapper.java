@@ -11,6 +11,7 @@ import ru.mityunin.model.User;
 public interface UserMapper {
 
     //@Mapping(target = "password", ignore = true)
+    @Mapping(target = "paymentAccounts", source = "paymentAccounts")
     UserDto userToUserDto(User user);
 
     User userDtoToUser(UserDto userDto);

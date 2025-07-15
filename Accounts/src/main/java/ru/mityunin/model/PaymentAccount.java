@@ -1,0 +1,29 @@
+package ru.mityunin.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Data
+@Entity
+@Table(name = "payment_accounts", schema = "accounts")
+public class PaymentAccount {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String accountNumber = UUID.randomUUID().toString();
+
+    @Column(nullable = false)
+    private String currency;
+
+    @Column(nullable = false)
+    private BigDecimal balance = BigDecimal.ZERO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+}
