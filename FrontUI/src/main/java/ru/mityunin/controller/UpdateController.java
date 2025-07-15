@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.mityunin.dto.AuthRequest;
+import ru.mityunin.dto.UserDto;
 import ru.mityunin.service.AccountsService;
 
 @Controller
@@ -23,6 +24,17 @@ public class UpdateController {
             model.addAttribute("passwordUpdated", true);
         } else {
             model.addAttribute("passwordError", "Failed to update password");
+        }
+        return "redirect:/home";
+    }
+
+    @PostMapping("/userInfo")
+    public String updateUserInfo(UserDto userDto, Model model) {
+        boolean success = accountsService.updateUserInfo(userDto);
+        if (success) {
+            model.addAttribute("userInfoUpdated", true);
+        } else {
+            model.addAttribute("userInfoUpdatedError", "Failed to update user info");
         }
         return "redirect:/home";
     }

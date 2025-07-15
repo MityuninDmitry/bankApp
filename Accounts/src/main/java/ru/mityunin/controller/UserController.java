@@ -79,4 +79,11 @@ public class UserController {
         userService.updateUserPassword(authRequest);
         return ResponseEntity.ok("Password updated");
     }
+
+    @PostMapping("/update/userInfo")
+    public  ResponseEntity<String> updateUserInfo(@RequestBody UserDto userDto) {
+
+        userService.updateUserInfo(userDto);
+        return ResponseEntity.ok("User updated");
+    }
 }

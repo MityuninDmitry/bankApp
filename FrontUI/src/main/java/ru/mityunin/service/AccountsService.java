@@ -132,4 +132,26 @@ public class AccountsService {
             return false;
         }
     }
+
+    public boolean updateUserInfo(UserDto userDto) {
+        log.info("Updating user info for user: {}", userDto.getLogin());
+        String url = accountsServiceUrl + "/accounts/update/userInfo";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    new HttpEntity<>(userDto, headers),
+                    String.class
+            );
+
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            log.error("Failed to update user info for user: {}", userDto.getLogin(), e);
+            return false;
+        }
+    }
 }

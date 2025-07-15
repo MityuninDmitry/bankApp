@@ -13,13 +13,46 @@
     </button>
   </form>
   </p>
-  <p><strong>First Name:</strong> <span th:text="${userDto.firstName} ?: 'Not specified'"></span></p>
-  <p><strong>Last Name:</strong> <span th:text="${userDto.lastName} ?: 'Not specified'"></span></p>
-  <p><strong>Email:</strong> <span th:text="${userDto.email} ?: 'Not specified'"></span></p>
-  <p><strong>Birth Date:</strong>
-    <span th:if="${userDto.birthDate != null}" th:text="${#temporals.format(userDto.birthDate, 'dd.MM.yyyy')}"></span>
-    <span th:unless="${userDto.birthDate != null}">Not specified</span>
-  </p>
+
+  <!-- Форма для изменения информации пользователя -->
+  <div style="margin-top: 20px;">
+    <h4>Edit Profile Information</h4>
+    <form th:action="@{/update/userInfo}" method="post">
+      <input type="hidden" name="login" th:value="${userDto.login}">
+
+      <div style="margin-bottom: 10px;">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" th:value="${userDto.firstName}"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" th:value="${userDto.lastName}"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:value="${userDto.email}"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="birthDate">Birth Date (yyyy-MM-dd):</label>
+        <input type="date" id="birthDate" name="birthDate"
+               th:value="${userDto.birthDate != null} ? ${#temporals.format(userDto.birthDate, 'yyyy-MM-dd')} : ''"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <button type="submit" style="color: white; background-color: #4CAF50; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+        Update Profile
+      </button>
+
+      <span th:if="${userInfoUpdated}" style="color: green; margin-left: 10px;">Profile updated successfully!</span>
+      <span th:if="${userInfoUpdatedError}" style="color: red; margin-left: 10px;" th:text="${userInfoUpdatedError}"></span>
+    </form>
+  </div>
 
   <!-- Форма для изменения пароля -->
   <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
