@@ -8,19 +8,27 @@ import ru.mityunin.dto.AuthRequest;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.dto.UserRegistrationRequest;
 import ru.mityunin.mapper.UserMapper;
+import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
+import ru.mityunin.service.AccountService;
 import ru.mityunin.service.UserService;
 import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/accounts")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final AccountService accountService;
     private final UserMapper userMapper;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService, AccountService accountService, UserMapper userMapper) {
         this.userService = userService;
+        this.accountService = accountService;
         this.userMapper = userMapper;
     }
 
@@ -42,6 +50,9 @@ public class UserController {
         }
 
         User user = userMapper.registrationRequestToUser(request);
+        List<PaymentAccount> paymentAccounts = accountService.createDefaultAccounts(user);
+        user.setPaymentAccounts(paymentAccounts);
+
         User savedUser = userService.saveUser(user);
 
         return ResponseEntity.ok(userMapper.userToUserDto(savedUser));
@@ -85,5 +96,50 @@ public class UserController {
 
         userService.updateUserInfo(userDto);
         return ResponseEntity.ok("User updated");
+    }
+
+    @PostMapping("/delete/paymentAccount")
+    public ResponseEntity<Void> deletePaymentAccount(@RequestBody Map<String, String> request) {
+        String accountNumber = request.get("accountNumber");
+        if (accountNumber == null || accountNumber.isBlank()) {
+            log.warn("Attempt to delete account with empty account number");
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            boolean deleted = accountService.deletePaymentAccount(accountNumber);
+            if (deleted) {
+                log.info("Account {} successfully deleted", accountNumber);
+                return ResponseEntity.ok().build();
+            } else {
+                log.warn("Account {} not found or already deleted", accountNumber);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("Error deleting account {}: {}", accountNumber, e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/add/paymentAccount")
+    public ResponseEntity<Void> addPaymentAccount(@RequestBody Map<String, String> request) {
+        String accountNumber = request.get("accountNumber");
+        if (accountNumber == null || accountNumber.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            boolean success = accountService.addPaymentAccount(accountNumber);
+            if (success) {
+                log.info("Account {} successfully available", accountNumber);
+                return ResponseEntity.ok().build();
+            } else {
+                log.warn("Account {} not found or already deleted", accountNumber);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("Error add account {}: {}", accountNumber, e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -5,6 +5,23 @@ spring:
     name: FrontUI
   thymeleaf:
     cache: false
+  mvc:
+    static-path-pattern: /**
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/resources/
+        - classpath:/META-INF/resources/
+  security:
+    filter:
+      dispatcher-types: REQUEST, ASYNC, ERROR
+    ignore:
+      - /static/**
+      - /public/**
+      - /resources/**
+      - /webjars/**
 accounts:
   service:
     url: http://accounts-service:8082
@@ -14,3 +31,6 @@ logging:
   org:
     springframework: DEBUG
     boot: DEBUG
+
+
+

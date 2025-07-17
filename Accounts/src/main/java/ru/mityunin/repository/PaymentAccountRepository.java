@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PaymentAccountRepository extends JpaRepository<PaymentAccount, Long> {
     List<PaymentAccount> findByUser(User user);
+    List<PaymentAccount> findByAccountNumber(String accountNumber);
 }

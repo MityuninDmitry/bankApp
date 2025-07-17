@@ -20,7 +20,6 @@
 		<module>Exchange</module>
 		<module>ExchangeGenerator</module>
 		<module>Blocker</module>
-		<module>Blocker</module>
 		<module>Notifications</module>
 	</modules>
 	<name>bankApp</name>

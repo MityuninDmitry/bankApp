@@ -48,6 +48,7 @@ public class DataInitializer implements CommandLineRunner {
         account.setCurrency(currency);
         account.setBalance(balance);
         account.setUser(user);
+        account.setIsDeleted(false);
         return account;
     }
 

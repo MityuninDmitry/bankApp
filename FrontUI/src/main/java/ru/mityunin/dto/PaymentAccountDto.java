@@ -17,4 +17,5 @@ public class PaymentAccountDto {
     @NotNull(message = "Balance cannot be null")
     @DecimalMin(value = "0.0", message = "Balance must be positive")
     private BigDecimal balance;
+    private Boolean isDeleted;
 }
