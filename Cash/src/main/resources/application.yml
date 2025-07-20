@@ -3,3 +3,6 @@ server:
 spring:
   application:
     name: Cash
+service:
+  accounts:
+    url: http://accounts-service:8082

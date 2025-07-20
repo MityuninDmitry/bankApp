@@ -22,9 +22,11 @@ spring:
       - /public/**
       - /resources/**
       - /webjars/**
-accounts:
-  service:
+service:
+  accounts:
     url: http://accounts-service:8082
+  cash:
+    url: http://cash-service:8083
 logging:
   level:
     root: INFO

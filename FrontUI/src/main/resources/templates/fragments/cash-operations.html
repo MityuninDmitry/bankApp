@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    .cash-operations {
+        margin: 20px 0;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+    }
+    .operation-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        margin-left: 5px;
+    }
+    .deposit-btn {
+        background-color: #4CAF50;
+    }
+    .withdraw-btn {
+        background-color: #f44336;
+    }
+    .amount-input {
+        padding: 5px;
+        width: 100px;
+        margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+<!-- Фрагмент для операций с наличными -->
+<div th:fragment="cashOperations(userDto)" th:if="${userDto != null and userDto.paymentAccounts != null}">
+  <div class="cash-operations">
+    <h4>Account Operations</h4>
+
+    <!-- Сообщения об ошибках/успехе -->
+    <div th:if="${cashActionMessage}"
+         th:style="${cashActionSuccess} ? 'color: green;' : 'color: red;'"
+         style="margin-bottom: 10px;">
+      <span th:text="${cashActionMessage}"></span>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+      <tr style="background-color: #f2f2f2;">
+        <th>Account Number</th>
+        <th>Currency</th>
+        <th>Balance</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="account : ${userDto.paymentAccounts}"
+          th:if="${account.isDeleted == null or !account.isDeleted}">
+        <td th:text="${account.accountNumber}"></td>
+        <td th:text="${account.currency}"></td>
+        <td style="text-align: right;"
+            th:text="${#numbers.formatDecimal(account.balance, 1, 2)}"></td>
+        <td>
+          <form th:action="@{/cash/action}" method="post">
+            <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
+            <input type="number" name="money" step="0.01" min="0.01"
+                   class="amount-input" required>
+            <button type="submit" name="action" value="DEPOSIT"
+                    class="operation-btn deposit-btn">
+              Deposit
+            </button>
+            <button type="submit" name="action" value="WITHDRAWN"
+                    class="operation-btn withdraw-btn">
+              Withdraw
+            </button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

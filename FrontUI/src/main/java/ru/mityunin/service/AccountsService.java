@@ -22,7 +22,7 @@ public class AccountsService {
     private final String accountsServiceUrl;
 
     public AccountsService(RestTemplate restTemplate,
-                           @Value("${accounts.service.url}") String accountsServiceUrl) {
+                           @Value("${service.accounts.url}") String accountsServiceUrl) {
         this.restTemplate = restTemplate;
         this.accountsServiceUrl = accountsServiceUrl;
     }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.mityunin.dto.AuthRequest;
+import ru.mityunin.dto.CashOperationRequest;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.dto.UserRegistrationRequest;
 import ru.mityunin.mapper.UserMapper;
@@ -141,5 +142,17 @@ public class UserController {
             log.error("Error add account {}: {}", accountNumber, e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PostMapping("/processOperation")
+    public ResponseEntity<Boolean> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
+
+        boolean isSuccess = accountService.processOperation(cashOperationRequest);
+        if (isSuccess) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 }

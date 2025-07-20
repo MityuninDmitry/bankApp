@@ -3,6 +3,8 @@ package ru.mityunin.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.mityunin.dto.CashOperationRequest;
+import ru.mityunin.model.CashOperation;
 import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
 import ru.mityunin.repository.PaymentAccountRepository;
@@ -81,5 +83,24 @@ public class AccountService {
         paymentAccounts.add(account);
 
         return paymentAccounts;
+    }
+
+    public boolean processOperation(CashOperationRequest cashOperationRequest) {
+        String accountNumber = cashOperationRequest.getAccountNumber();
+        PaymentAccount paymentAccount = paymentAccountRepository.findByAccountNumber(accountNumber).getFirst();
+        if (cashOperationRequest.getAction().equals(CashOperation.DEPOSIT)) {
+            paymentAccount.setBalance(paymentAccount.getBalance().add(cashOperationRequest.getMoney()));
+            paymentAccountRepository.save(paymentAccount);
+
+        } else if (cashOperationRequest.getAction().equals(CashOperation.WITHDRAWN)) {
+            if (paymentAccount.getBalance().compareTo(cashOperationRequest.getMoney()) < 0) {
+                return false;
+            } else {
+                paymentAccount.setBalance(
+                        paymentAccount.getBalance().subtract(cashOperationRequest.getMoney()));
+                paymentAccountRepository.save(paymentAccount);
+            }
+        }
+        return true;
     }
 }
