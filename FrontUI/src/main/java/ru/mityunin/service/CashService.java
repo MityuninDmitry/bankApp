@@ -1,47 +1,36 @@
 package ru.mityunin.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
+
+import ru.mityunin.common.dto.ApiResponse;
+import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.CashOperationRequest;
-import ru.mityunin.dto.UserDto;
 
 @Service
 public class CashService {
     private static final Logger log = LoggerFactory.getLogger(CashService.class);
-    private final RestTemplate restTemplate;
     private final String serviceUrl;
+    private final RestTemplateHelper restTemplateHelper;
 
-    public CashService(RestTemplate restTemplate,
-                           @Value("${service.cash.url}") String serviceUrl) {
-        this.restTemplate = restTemplate;
+    public CashService(
+            @Value("${service.cash.url}") String serviceUrl,
+            RestTemplateHelper restTemplateHelper) {
         this.serviceUrl = serviceUrl;
+        this.restTemplateHelper = restTemplateHelper;
     }
 
-    public boolean processOperation(CashOperationRequest cashOperationRequest) {
+    public ApiResponse processOperation(CashOperationRequest cashOperationRequest) {
         log.info("Cash operation request {}", cashOperationRequest);
         String url = serviceUrl + "/cash/processOperation";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-
-        try {
-            ResponseEntity<Boolean> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(cashOperationRequest, headers),
-                    Boolean.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
-        } catch (Exception e) {
-
-            return false;
-        }
-
+        return restTemplateHelper.postForApiResponse(url, cashOperationRequest, Void.class);
     }
 }

@@ -3,12 +3,14 @@ package ru.mityunin.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.CashOperationRequest;
 import ru.mityunin.model.CashOperation;
 import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
 import ru.mityunin.repository.PaymentAccountRepository;
-import ru.mityunin.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -85,7 +87,8 @@ public class AccountService {
         return paymentAccounts;
     }
 
-    public boolean processOperation(CashOperationRequest cashOperationRequest) {
+    @Transactional
+    public ApiResponse processOperation(CashOperationRequest cashOperationRequest) {
         String accountNumber = cashOperationRequest.getAccountNumber();
         PaymentAccount paymentAccount = paymentAccountRepository.findByAccountNumber(accountNumber).getFirst();
         if (cashOperationRequest.getAction().equals(CashOperation.DEPOSIT)) {
@@ -94,13 +97,13 @@ public class AccountService {
 
         } else if (cashOperationRequest.getAction().equals(CashOperation.WITHDRAWN)) {
             if (paymentAccount.getBalance().compareTo(cashOperationRequest.getMoney()) < 0) {
-                return false;
+                return ApiResponse.error("NOT ENOUGHT MONEY");
             } else {
                 paymentAccount.setBalance(
                         paymentAccount.getBalance().subtract(cashOperationRequest.getMoney()));
                 paymentAccountRepository.save(paymentAccount);
             }
         }
-        return true;
+        return ApiResponse.success("OPERATION SUCCESS");
     }
 }

@@ -35,10 +35,8 @@
     <h4>Account Operations</h4>
 
     <!-- Сообщения об ошибках/успехе -->
-    <div th:if="${cashActionMessage}"
-         th:style="${cashActionSuccess} ? 'color: green;' : 'color: red;'"
-         style="margin-bottom: 10px;">
-      <span th:text="${cashActionMessage}"></span>
+    <div th:if="${actionWithPaymentAccountError}" style="color: red; margin-bottom: 10px;">
+      <span th:text="${actionWithPaymentAccountError}"></span>
     </div>
 
     <table style="width: 100%; border-collapse: collapse;">

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.AuthRequest;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.dto.UserRegistrationRequest;
@@ -20,11 +21,13 @@ public class AccountsService {
     private static final Logger log = LoggerFactory.getLogger(AccountsService.class);
     private final RestTemplate restTemplate;
     private final String accountsServiceUrl;
+    private final RestTemplateHelper restTemplateHelper;
 
     public AccountsService(RestTemplate restTemplate,
-                           @Value("${service.accounts.url}") String accountsServiceUrl) {
+                           @Value("${service.accounts.url}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
         this.restTemplate = restTemplate;
         this.accountsServiceUrl = accountsServiceUrl;
+        this.restTemplateHelper = restTemplateHelper;
     }
 
     // Метод для проверки логина/пароля
@@ -36,22 +39,7 @@ public class AccountsService {
         authRequest.setLogin(login);
         authRequest.setPassword(password);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            ResponseEntity<UserDto> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(authRequest, headers),
-                    UserDto.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
-        } catch (Exception e) {
-            log.error("Authentication failed for user: {}", login, e);
-            return null;
-        }
+        return restTemplateHelper.postForApiResponse(url, authRequest, UserDto.class).getData();
     }
 
     // Метод для получения данных пользователя без проверки пароля

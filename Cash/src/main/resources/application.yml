@@ -6,3 +6,6 @@ spring:
 service:
   accounts:
     url: http://accounts-service:8082
+logging:
+  level:
+    ru.mityunin: INFO

@@ -2,16 +2,15 @@
 FROM maven:3.9.6-eclipse-temurin-21 as builder
 WORKDIR /app
 
-# Копируем сначала родительский POM, затем модуль
-COPY pom.xml .
-COPY Cash/pom.xml Cash/
-COPY Cash/src Cash/src
+# Копируем ВЕСЬ проект
+COPY . .
 
-# Собираем с указанием относительного пути к родительскому POM
-RUN mvn -f Cash/pom.xml clean package -DskipTests
+# Собираем весь проект (из корня)
+# RUN mvn clean install -DskipTests
+RUN mvn clean package -pl Cash -am -DskipTests
 
 # Финальный образ
-FROM openjdk:21-jdk
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/Cash/target/Cash-*.jar app.jar
 EXPOSE 8083

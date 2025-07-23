@@ -30,6 +30,7 @@ service:
 logging:
   level:
     root: INFO
+    ru.mityunin: INFO
   org:
     springframework: DEBUG
     boot: DEBUG

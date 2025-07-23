@@ -21,6 +21,7 @@
 		<module>ExchangeGenerator</module>
 		<module>Blocker</module>
 		<module>Notifications</module>
+		<module>Common</module>
 	</modules>
 	<name>bankApp</name>
 	<description>Demo project for Spring Boot</description>
