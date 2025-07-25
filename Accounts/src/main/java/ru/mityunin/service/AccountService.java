@@ -88,7 +88,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ApiResponse processOperation(CashOperationRequest cashOperationRequest) {
+    public ApiResponse<Void> processOperation(CashOperationRequest cashOperationRequest) {
         String accountNumber = cashOperationRequest.getAccountNumber();
         PaymentAccount paymentAccount = paymentAccountRepository.findByAccountNumber(accountNumber).getFirst();
         if (cashOperationRequest.getAction().equals(CashOperation.DEPOSIT)) {

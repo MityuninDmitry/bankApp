@@ -27,14 +27,13 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/login",
-                                "/register",
+                                "/accounts/register",
                                 "/static/**",
                                 "/js/**",
                                 "/css/**",
                                 "/webjars/**"
                         ).permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/accounts/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/delete").authenticated()
                         .anyRequest().authenticated()
                 )

@@ -31,20 +31,19 @@ public class UserController {
     }
 
     @GetMapping("/{login}")
-    public ResponseEntity<UserDto> getUserByLogin(@PathVariable String login) {
+    public ResponseEntity<ApiResponse<UserDto>> getUserByLogin(@PathVariable String login) {
         User user = userService.findByLogin(login);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("NOT FOUND"));
         }
-
-        return ResponseEntity.ok(userMapper.userToUserDto(user));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("USER FOUND",userMapper.userToUserDto(user)));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserRegistrationRequest request) {
+    public ResponseEntity<ApiResponse<UserDto>> registerUser(@RequestBody UserRegistrationRequest request) {
         // Проверяем, не существует ли уже пользователь с таким логином
         if (userService.findByLogin(request.getLogin()) != null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("SUCH USER EXISTS"));
         }
 
         User user = userMapper.registrationRequestToUser(request);
@@ -53,7 +52,7 @@ public class UserController {
 
         User savedUser = userService.saveUser(user);
 
-        return ResponseEntity.ok(userMapper.userToUserDto(savedUser));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("REGISTERED",userMapper.userToUserDto(savedUser)));
     }
 
     @PostMapping("/auth")
@@ -68,82 +67,80 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteUser(@RequestBody String login) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@RequestBody String login) {
         log.info("Delete request for: {}", login);
         User user = userService.findByLogin(login);
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("NO SUCH USER"));
         }
 
         userService.deleteUser(login);
 
-        return ResponseEntity.ok("Success user deletion by login");
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Success user deletion by login"));
     }
 
     @PostMapping("/update/password")
-    public  ResponseEntity<String> updateUserPassword(@RequestBody AuthRequest authRequest) {
+    public  ResponseEntity<ApiResponse<Void>> updateUserPassword(@RequestBody AuthRequest authRequest) {
         log.info("Update User Password request for: {}", authRequest.getLogin());
         userService.updateUserPassword(authRequest);
-        return ResponseEntity.ok("Password updated");
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Password updated"));
     }
 
     @PostMapping("/update/userInfo")
-    public  ResponseEntity<String> updateUserInfo(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<Void>> updateUserInfo(@RequestBody UserDto userDto) {
 
         userService.updateUserInfo(userDto);
-        return ResponseEntity.ok("User updated");
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("User updated"));
     }
 
     @PostMapping("/delete/paymentAccount")
-    public ResponseEntity<Void> deletePaymentAccount(@RequestBody Map<String, String> request) {
+    public ResponseEntity<ApiResponse<Void>> deletePaymentAccount(@RequestBody Map<String, String> request) {
         String accountNumber = request.get("accountNumber");
         if (accountNumber == null || accountNumber.isBlank()) {
-            log.warn("Attempt to delete account with empty account number");
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Attempt to delete account with empty account number"));
         }
 
         try {
             boolean deleted = accountService.deletePaymentAccount(accountNumber);
             if (deleted) {
                 log.info("Account {} successfully deleted", accountNumber);
-                return ResponseEntity.ok().build();
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("SUCCESS DELETING"));
             } else {
                 log.warn("Account {} not found or already deleted", accountNumber);
-                return ResponseEntity.notFound().build();
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("NOT FOUND OR ALREADY DELETED"));
             }
         } catch (Exception e) {
             log.error("Error deleting account {}: {}", accountNumber, e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("SOME INTERNAL ERROR"));
         }
     }
 
     @PostMapping("/add/paymentAccount")
-    public ResponseEntity<Void> addPaymentAccount(@RequestBody Map<String, String> request) {
+    public ResponseEntity<ApiResponse<Void>> addPaymentAccount(@RequestBody Map<String, String> request) {
         String accountNumber = request.get("accountNumber");
         if (accountNumber == null || accountNumber.isBlank()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("WHERE IS ACCOUNT NUMBER IN YOUR REQUEST?"));
         }
 
         try {
             boolean success = accountService.addPaymentAccount(accountNumber);
             if (success) {
-                log.info("Account {} successfully available", accountNumber);
-                return ResponseEntity.ok().build();
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Payment Account added"));
             } else {
-                log.warn("Account {} not found or already deleted", accountNumber);
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Payment Account not found or already deleted"));
             }
         } catch (Exception e) {
             log.error("Error add account {}: {}", accountNumber, e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("SOME INTERNAL ERROR"));
         }
     }
 
     @PostMapping("/processOperation")
     public ResponseEntity<ApiResponse> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
 
-        ApiResponse apiResponse = accountService.processOperation(cashOperationRequest);
+        ApiResponse<Void> apiResponse = accountService.processOperation(cashOperationRequest);
         if (apiResponse.isSuccess()) {
             return ResponseEntity.ok(apiResponse);
         } else {

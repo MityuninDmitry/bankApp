@@ -28,7 +28,7 @@ public class CashController {
     public String actionWithPaymentAccount(
             @Valid @ModelAttribute("cashOperationRequest") CashOperationRequest cashOperationRequest,
             RedirectAttributes redirectAttributes) {
-        ApiResponse apiResponse = cashService.processOperation(cashOperationRequest);
+        ApiResponse<Void> apiResponse = cashService.processOperation(cashOperationRequest);
         log.info("CashController: api response {}", apiResponse);
         if (!apiResponse.isSuccess()) {
             log.info("CashController: api message {}", apiResponse.getMessage());

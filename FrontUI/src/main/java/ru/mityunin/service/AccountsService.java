@@ -46,177 +46,47 @@ public class AccountsService {
     public UserDto getUserByLogin(String login) {
         log.info("Getting user by login: {}", login);
         String url = accountsServiceUrl + "/accounts/" + login;
-
-        try {
-            ResponseEntity<UserDto> response = restTemplate.getForEntity(
-                    url,
-                    UserDto.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
-        } catch (Exception e) {
-            log.error("Failed to get user by login: {}", login, e);
-            return null;
-        }
+        return restTemplateHelper.getForApiResponse(url,UserDto.class).getData();
     }
 
     public boolean deletePaymentAccount(String accountNumber) {
         log.info("Attempting to delete accountNumber: {}", accountNumber);
         String url = accountsServiceUrl + "/accounts/delete/paymentAccount";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            Map<String, String> requestBody = Collections.singletonMap("accountNumber", accountNumber);
-
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(requestBody, headers),
-                    Void.class
-            );
-
-            if (response.getStatusCode() == HttpStatus.OK) {
-                log.info("Successfully deleted account: {}", accountNumber);
-                return true;
-            } else {
-                log.warn("Failed to delete account: {}. Status: {}", accountNumber, response.getStatusCode());
-                return false;
-            }
-        } catch (HttpClientErrorException e) {
-            log.error("Client error when deleting account {}: {}", accountNumber, e.getMessage());
-            return false;
-        } catch (HttpServerErrorException e) {
-            log.error("Server error when deleting account {}: {}", accountNumber, e.getMessage());
-            return false;
-        } catch (Exception e) {
-            log.error("Unexpected error when deleting account {}: {}", accountNumber, e.getMessage(), e);
-            return false;
-        }
+        Map<String, String> requestBody = Collections.singletonMap("accountNumber", accountNumber);
+        return restTemplateHelper.postForApiResponse(url,requestBody, Void.class).isSuccess();
     }
 
     public boolean addPaymentAccount(String accountNumber) {
         log.info("Attempting to delete accountNumber: {}", accountNumber);
         String url = accountsServiceUrl + "/accounts/add/paymentAccount";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            Map<String, String> requestBody = Collections.singletonMap("accountNumber", accountNumber);
-
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(requestBody, headers),
-                    Void.class
-            );
-
-            if (response.getStatusCode() == HttpStatus.OK) {
-                log.info("Successfully add account: {}", accountNumber);
-                return true;
-            } else {
-                log.warn("Failed to add account: {}. Status: {}", accountNumber, response.getStatusCode());
-                return false;
-            }
-        } catch (HttpClientErrorException e) {
-            log.error("Client error when add account {}: {}", accountNumber, e.getMessage());
-            return false;
-        } catch (HttpServerErrorException e) {
-            log.error("Server error when add account {}: {}", accountNumber, e.getMessage());
-            return false;
-        } catch (Exception e) {
-            log.error("Unexpected error when add account {}: {}", accountNumber, e.getMessage(), e);
-            return false;
-        }
+        Map<String, String> requestBody = Collections.singletonMap("accountNumber", accountNumber);
+        return restTemplateHelper.postForApiResponse(url,requestBody,Void.class).isSuccess();
     }
 
     public UserDto registerUser(UserRegistrationRequest registrationRequest) {
         log.info("Registering new user: {}", registrationRequest.getLogin());
         String url = accountsServiceUrl + "/accounts/register";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            ResponseEntity<UserDto> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(registrationRequest, headers),
-                    UserDto.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
-        } catch (Exception e) {
-            log.error("Registration failed for user: {}", registrationRequest.getLogin(), e);
-            return null;
-        }
+        return restTemplateHelper.postForApiResponse(url,registrationRequest,UserDto.class).getData();
     }
 
     public boolean deleteUser(String login) {
         log.info("Deleting user: {}", login);
         String url = accountsServiceUrl + "/accounts/delete";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(login, headers),
-                    String.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e) {
-            log.error("Failed to delete user: {}", login, e);
-            return false;
-        }
+        return restTemplateHelper.postForApiResponse(url,login, Void.class).isSuccess();
     }
 
     public boolean updatePassword(AuthRequest authRequest) {
         log.info("Updating password for user: {}", authRequest.getLogin());
         String url = accountsServiceUrl + "/accounts/update/password";
+        return restTemplateHelper.postForApiResponse(url, authRequest, Void.class).isSuccess();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(authRequest, headers),
-                    String.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e) {
-            log.error("Failed to update password for user: {}", authRequest.getLogin(), e);
-            return false;
-        }
     }
 
     public boolean updateUserInfo(UserDto userDto) {
         log.info("Updating user info for user: {}", userDto.getLogin());
         String url = accountsServiceUrl + "/accounts/update/userInfo";
+        return restTemplateHelper.postForApiResponse(url,userDto, Void.class).isSuccess();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    new HttpEntity<>(userDto, headers),
-                    String.class
-            );
-
-            return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e) {
-            log.error("Failed to update user info for user: {}", userDto.getLogin(), e);
-            return false;
-        }
     }
 }

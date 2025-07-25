@@ -18,6 +18,23 @@ public class RestTemplateHelper {
         this.objectMapper = objectMapper;
     }
 
+    // GET-запрос с возвратом ApiResponse
+    public <T> ApiResponse<T> getForApiResponse(String url, Class<T> responseType) {
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    new HttpEntity<>(getJsonHeaders()),
+                    String.class
+            );
+            return parseResponse(response.getBody(), responseType);
+        } catch (HttpStatusCodeException e) {
+            return parseErrorResponse(e.getResponseBodyAsString(), responseType);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
     public <T> ApiResponse<T> postForApiResponse(String url, Object request, Class<T> responseType) {
         try {
             ResponseEntity<String> response = restTemplate.exchange(

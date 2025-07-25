@@ -28,7 +28,7 @@ public class CashService {
         this.restTemplateHelper = restTemplateHelper;
     }
 
-    public ApiResponse processOperation(CashOperationRequest cashOperationRequest) {
+    public ApiResponse<Void> processOperation(CashOperationRequest cashOperationRequest) {
         log.info("Cash operation request {}", cashOperationRequest);
         String url = serviceUrl + "/cash/processOperation";
         return restTemplateHelper.postForApiResponse(url, cashOperationRequest, Void.class);
