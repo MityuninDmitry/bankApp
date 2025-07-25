@@ -6,6 +6,8 @@ spring:
 service:
   accounts:
     url: http://accounts-service:8082
+  blocker:
+    url: http://blocker-service:8087
 logging:
   level:
     ru.mityunin: INFO

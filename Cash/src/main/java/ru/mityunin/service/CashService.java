@@ -20,16 +20,28 @@ import java.io.DataInput;
 public class CashService {
     private static final Logger log = LoggerFactory.getLogger(CashService.class);
     private final String accountsServiceUrl;
+    private final String blockerServiceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public CashService(@Value("${service.accounts.url}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public CashService(
+            @Value("${service.accounts.url}") String accountsServiceUrl,
+            @Value("${service.blocker.url}") String blockerServiceUrl,
+            RestTemplateHelper restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
+        this.blockerServiceUrl = blockerServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }
 
     public ApiResponse<Void> processOperation(CashOperationRequest cashOperationRequest) {
         log.info("cash operation {}", cashOperationRequest);
-        String url = accountsServiceUrl + "/accounts/processOperation";
-        return restTemplateHelper.postForApiResponse(url,cashOperationRequest, Void.class);
+        String accountsUrl = accountsServiceUrl + "/accounts/processOperation";
+        String blockerUrl = blockerServiceUrl + "/blocker/checkOperation";
+        ApiResponse<Void> suspiciousOperationResponse = restTemplateHelper.postForApiResponse(blockerUrl, cashOperationRequest, Void.class);
+        if (suspiciousOperationResponse.isSuccess()) {
+            return restTemplateHelper.postForApiResponse(accountsUrl,cashOperationRequest, Void.class);
+        } else  {
+            return suspiciousOperationResponse;
+        }
+
     }
 }

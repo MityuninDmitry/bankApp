@@ -10,10 +10,12 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.AuthRequest;
+import ru.mityunin.dto.PaymentAccountDto;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.dto.UserRegistrationRequest;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 @Service
@@ -46,7 +48,9 @@ public class AccountsService {
     public UserDto getUserByLogin(String login) {
         log.info("Getting user by login: {}", login);
         String url = accountsServiceUrl + "/accounts/" + login;
-        return restTemplateHelper.getForApiResponse(url,UserDto.class).getData();
+        UserDto userDto = restTemplateHelper.getForApiResponse(url,UserDto.class).getData();
+        userDto.getPaymentAccounts().sort(Comparator.comparing(PaymentAccountDto::getAccountNumber));
+        return userDto;
     }
 
     public boolean deletePaymentAccount(String accountNumber) {
