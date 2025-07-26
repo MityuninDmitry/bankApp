@@ -2,6 +2,7 @@ package ru.mityunin;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import ru.mityunin.model.CurrencyType;
 import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.service.UserService;
 import ru.mityunin.model.User;
@@ -33,9 +34,9 @@ public class DataInitializer implements CommandLineRunner {
 
         // Создаем счета
         List<PaymentAccount> accounts = List.of(
-                createAccount("RUB", new BigDecimal("100000.00"), user),
-                createAccount("USD", new BigDecimal("1000.00"), user),
-                createAccount("CNY", new BigDecimal("5000.00"), user)
+                createAccount(CurrencyType.RUB, new BigDecimal("100000.00"), user),
+                createAccount(CurrencyType.CNY, new BigDecimal("1000.00"), user),
+                createAccount(CurrencyType.USD, new BigDecimal("5000.00"), user)
         );
 
         user.setPaymentAccounts(accounts);
@@ -43,7 +44,7 @@ public class DataInitializer implements CommandLineRunner {
         userService.saveUser(user);
     }
 
-    private PaymentAccount createAccount(String currency, BigDecimal balance, User user) {
+    private PaymentAccount createAccount(CurrencyType currency, BigDecimal balance, User user) {
         PaymentAccount account = new PaymentAccount();
         account.setCurrency(currency);
         account.setBalance(balance);

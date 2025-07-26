@@ -18,7 +18,7 @@ public class PaymentAccount {
     private String accountNumber = UUID.randomUUID().toString();
 
     @Column(nullable = false)
-    private String currency;
+    private CurrencyType currency;
 
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;

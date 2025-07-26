@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.CashOperationRequest;
 import ru.mityunin.model.CashOperation;
+import ru.mityunin.model.CurrencyType;
 import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
 import ru.mityunin.repository.PaymentAccountRepository;
@@ -61,7 +62,7 @@ public class AccountService {
         List<PaymentAccount> paymentAccounts = new ArrayList<>();
 
         PaymentAccount account = new PaymentAccount();
-        account.setCurrency("RUB");
+        account.setCurrency(CurrencyType.RUB);
         account.setBalance(BigDecimal.ZERO);
         account.setUser(user);
         account.setIsDeleted(true);
@@ -69,7 +70,7 @@ public class AccountService {
         paymentAccounts.add(account);
 
         account = new PaymentAccount();
-        account.setCurrency("CNY");
+        account.setCurrency(CurrencyType.CNY);
         account.setBalance(BigDecimal.ZERO);
         account.setUser(user);
         account.setIsDeleted(true);
@@ -77,7 +78,7 @@ public class AccountService {
         paymentAccounts.add(account);
 
         account = new PaymentAccount();
-        account.setCurrency("USD");
+        account.setCurrency(CurrencyType.CNY);
         account.setBalance(BigDecimal.ZERO);
         account.setUser(user);
         account.setIsDeleted(true);
