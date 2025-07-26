@@ -2,16 +2,16 @@
 FROM maven:3.9.6-eclipse-temurin-21 as builder
 WORKDIR /app
 
-# Копируем сначала родительский POM, затем модуль
-COPY pom.xml .
-COPY ExchangeGenerator/pom.xml ExchangeGenerator/
-COPY ExchangeGenerator/src ExchangeGenerator/src
+# Копируем ВЕСЬ проект
+COPY . .
 
-# Собираем с указанием относительного пути к родительскому POM
-RUN mvn -f ExchangeGenerator/pom.xml clean package -DskipTests
+# Собираем весь проект (из корня)
+# RUN mvn clean install -DskipTests
+RUN mvn clean package -pl ExchangeGenerator -am -DskipTests
+
 
 # Финальный образ
-FROM openjdk:21-jdk
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/ExchangeGenerator/target/ExchangeGenerator-*.jar app.jar
 EXPOSE 8086

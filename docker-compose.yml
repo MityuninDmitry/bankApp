@@ -51,7 +51,12 @@ services:
     ports:
       - "8086:8086"
     environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts?currentSchema=exchange_generator
+      SPRING_DATASOURCE_USERNAME: accounts_user
+      SPRING_DATASOURCE_PASSWORD: accounts_password
       SERVER_PORT: 8086
+    depends_on:
+      - accounts-db
   blocker-service:
     build:
       context: .
@@ -79,7 +84,7 @@ services:
       - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./Accounts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U accounts_user -d accounts" ]
       interval: 5s
