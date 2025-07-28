@@ -27,6 +27,8 @@ service:
     url: http://accounts-service:8082
   cash:
     url: http://cash-service:8083
+  exchangegenerator:
+    url: http://exchange-generator-service:8086
 logging:
   level:
     root: INFO

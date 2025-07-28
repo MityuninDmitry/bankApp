@@ -26,7 +26,7 @@ public class ExchangeGeneratorController {
         this.generatorService = generatorService;
     }
 
-    @GetMapping("/сurrencies")
+    @GetMapping("/currencies")
     public ResponseEntity<ApiResponse<List<ExchangeCurrency>>> actualCurrencies() {
         ApiResponse<List<ExchangeCurrency>> apiResponse = generatorService.actualCurrencies();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
