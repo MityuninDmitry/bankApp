@@ -6,10 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.ExchangeCurrency;
+import ru.mityunin.dto.ExchangeCurrencyDto;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.service.AccountsService;
-import ru.mityunin.service.ExchangeGeneratorService;
+import ru.mityunin.service.ExchangeService;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,18 +18,18 @@ import java.util.List;
 @RequestMapping("/home")
 public class HomeController {
     private final AccountsService accountsService;
-    private final ExchangeGeneratorService exchangeGeneratorService;
+    private final ExchangeService exchangeService;
 
-    public HomeController(AccountsService accountsService, ExchangeGeneratorService exchangeGeneratorService) {
+    public HomeController(AccountsService accountsService, ExchangeService exchangeService) {
         this.accountsService = accountsService;
-        this.exchangeGeneratorService = exchangeGeneratorService;
+        this.exchangeService = exchangeService;
     }
     @GetMapping
     public String showMainPage(Authentication authentication, Model model) {
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             UserDto userDto = accountsService.getUserByLogin(username);
-            ApiResponse<List<ExchangeCurrency>> response = exchangeGeneratorService.currencies();
+            ApiResponse<List<ExchangeCurrencyDto>> response = exchangeService.currencies();
 
             if (response != null && response.isSuccess() && response.getData() != null) {
                 model.addAttribute("currencies", response.getData());

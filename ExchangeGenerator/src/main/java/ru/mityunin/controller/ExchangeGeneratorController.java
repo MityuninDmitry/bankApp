@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.mityunin.common.dto.ApiResponse;
+import ru.mityunin.dto.ExchangeCurrencyDto;
 import ru.mityunin.model.ExchangeCurrency;
 import ru.mityunin.service.ExchangeGeneratorService;
 
@@ -27,8 +28,8 @@ public class ExchangeGeneratorController {
     }
 
     @GetMapping("/currencies")
-    public ResponseEntity<ApiResponse<List<ExchangeCurrency>>> actualCurrencies() {
-        ApiResponse<List<ExchangeCurrency>> apiResponse = generatorService.actualCurrencies();
+    public ResponseEntity<ApiResponse<List<ExchangeCurrencyDto>>> actualCurrencies() {
+        ApiResponse<List<ExchangeCurrencyDto>> apiResponse = generatorService.actualCurrencies();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

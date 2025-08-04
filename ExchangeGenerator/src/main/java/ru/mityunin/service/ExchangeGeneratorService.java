@@ -4,6 +4,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mityunin.common.dto.ApiResponse;
+import ru.mityunin.dto.ExchangeCurrencyDto;
+import ru.mityunin.mapper.ExchangeCurrencyMapper;
 import ru.mityunin.model.CurrencyType;
 import ru.mityunin.model.ExchangeCurrency;
 import ru.mityunin.repository.ExchangeCurrencyRepository;
@@ -15,9 +17,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class ExchangeGeneratorService {
     private ExchangeCurrencyRepository exchangeCurrencyRepository;
+    private ExchangeCurrencyMapper exchangeCurrencyMapper;
 
-    public ExchangeGeneratorService(ExchangeCurrencyRepository exchangeCurrencyRepository) {
+    public ExchangeGeneratorService(ExchangeCurrencyRepository exchangeCurrencyRepository, ExchangeCurrencyMapper exchangeCurrencyMapper) {
         this.exchangeCurrencyRepository = exchangeCurrencyRepository;
+        this.exchangeCurrencyMapper = exchangeCurrencyMapper;
     }
 
     // Генерация данных каждую секунду (1000 мс)
@@ -28,7 +32,7 @@ public class ExchangeGeneratorService {
         LocalDateTime localDateTime = LocalDateTime.now();
         for (CurrencyType currencyFrom : CurrencyType.values()) {
             for (CurrencyType currencyTo : CurrencyType.values()) {
-                if (!currencyFrom.equals(currencyTo) && !currencyFrom.equals(CurrencyType.RUB)) {
+                if (!currencyFrom.equals(currencyTo) && (currencyFrom.equals(CurrencyType.RUB) || currencyTo.equals(CurrencyType.RUB))) {
                     ExchangeCurrency FROM_TO = new ExchangeCurrency();
                     FROM_TO.setLocalDateTime(localDateTime);
                     FROM_TO.setCurrencyFrom(currencyFrom);
@@ -59,9 +63,14 @@ public class ExchangeGeneratorService {
 
     }
 
-    public ApiResponse<List<ExchangeCurrency>> actualCurrencies() {
+    public ApiResponse<List<ExchangeCurrencyDto>> actualCurrencies() {
         LocalDateTime localDateTime = exchangeCurrencyRepository.findLatestDateTime();
-        List<ExchangeCurrency> exchangeCurrencyList = exchangeCurrencyRepository.findByLocalDateTime(localDateTime);
+        List<ExchangeCurrencyDto> exchangeCurrencyList = exchangeCurrencyRepository
+                .findByLocalDateTime(localDateTime)
+                .stream()
+                .map(exchangeCurrency ->
+                        exchangeCurrencyMapper.exchangeCurrencyToExchangeCurrencyDto(exchangeCurrency))
+                .toList();
         return ApiResponse.success("Актуальные курсы валют", exchangeCurrencyList);
     }
 
