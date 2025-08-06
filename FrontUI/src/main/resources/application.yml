@@ -31,6 +31,8 @@ service:
     url: http://exchange-generator-service:8086
   exchange:
     url: http://exchange-service:8085
+  transfer:
+    url: http://transfer-service:8084
 logging:
   level:
     root: INFO

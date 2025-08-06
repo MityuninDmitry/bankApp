@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.CashOperationRequest;
+import ru.mityunin.dto.PaymentAccountDto;
+import ru.mityunin.mapper.UserMapper;
 import ru.mityunin.model.CashOperation;
 import ru.mityunin.model.CurrencyType;
 import ru.mityunin.model.PaymentAccount;
@@ -20,12 +22,14 @@ import java.util.List;
 @Service
 public class AccountService {
     private static final Logger log = LoggerFactory.getLogger(AccountService.class);
-
-    public AccountService(PaymentAccountRepository paymentAccountRepository) {
+    private final PaymentAccountRepository paymentAccountRepository;
+    private final UserMapper userMapper;
+    public AccountService(PaymentAccountRepository paymentAccountRepository, UserMapper userMapper) {
         this.paymentAccountRepository = paymentAccountRepository;
+        this.userMapper = userMapper;
     }
 
-    private final PaymentAccountRepository paymentAccountRepository;
+
 
     public boolean deletePaymentAccount(String accountNumber) {
         log.info("Request for set deletion {}", accountNumber);
@@ -92,11 +96,13 @@ public class AccountService {
     public ApiResponse<Void> processOperation(CashOperationRequest cashOperationRequest) {
         String accountNumber = cashOperationRequest.getAccountNumber();
         PaymentAccount paymentAccount = paymentAccountRepository.findByAccountNumber(accountNumber).getFirst();
+
         if (cashOperationRequest.getAction().equals(CashOperation.DEPOSIT)) {
             paymentAccount.setBalance(paymentAccount.getBalance().add(cashOperationRequest.getMoney()));
             paymentAccountRepository.save(paymentAccount);
 
         } else if (cashOperationRequest.getAction().equals(CashOperation.WITHDRAWN)) {
+            log.info("[Accounts] current money value {}, try withdrawn {}", paymentAccount.getBalance(), cashOperationRequest.getMoney() );
             if (paymentAccount.getBalance().compareTo(cashOperationRequest.getMoney()) < 0) {
                 return ApiResponse.error("NOT ENOUGHT MONEY");
             } else {
@@ -106,5 +112,14 @@ public class AccountService {
             }
         }
         return ApiResponse.success("OPERATION SUCCESS");
+    }
+
+    public ApiResponse<PaymentAccountDto> getAccountInfo(String accountNumber) {
+        PaymentAccount paymentAccount = paymentAccountRepository.findByAccountNumber(accountNumber).getFirst();
+        if (paymentAccount.getIsDeleted()) {
+            return ApiResponse.error("NO ACCOUNT INFO FOR " + accountNumber + ": it's deleted");
+        } else  {
+            return ApiResponse.success("There is account number info", userMapper.paymentAccountToPaymentAccountDto(paymentAccount));
+        }
     }
 }

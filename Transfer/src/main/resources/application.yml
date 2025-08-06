@@ -3,3 +3,8 @@ server:
 spring:
   application:
     name: Transfer
+service:
+  accounts:
+    url: http://accounts-service:8082
+  exchange:
+    url: http://exchange-service:8085

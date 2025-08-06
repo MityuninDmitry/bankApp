@@ -138,8 +138,8 @@ public class UserController {
     }
 
     @PostMapping("/processOperation")
-    public ResponseEntity<ApiResponse> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
-
+    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
+        log.info("[Accounts] processOperation {}",cashOperationRequest);
         ApiResponse<Void> apiResponse = accountService.processOperation(cashOperationRequest);
         if (apiResponse.isSuccess()) {
             return ResponseEntity.ok(apiResponse);
@@ -147,5 +147,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
         }
 
+    }
+
+    @PostMapping("/accountInfo")
+    public ResponseEntity<ApiResponse<PaymentAccountDto>> getAccountInfo(@RequestBody String accountNumber) {
+        ApiResponse<PaymentAccountDto> paymentAccountApiResponse = accountService.getAccountInfo(accountNumber);
+        if (paymentAccountApiResponse.isSuccess()) {
+            return ResponseEntity.ok(paymentAccountApiResponse);
+        } else  {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(paymentAccountApiResponse);
+        }
     }
 }
