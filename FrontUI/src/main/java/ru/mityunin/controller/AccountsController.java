@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,13 +18,16 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.AuthRequest;
+import ru.mityunin.dto.PaymentAccountDto;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.dto.UserRegistrationRequest;
 import ru.mityunin.service.AccountsService;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 @Controller
 @RequestMapping("/accounts")
@@ -143,5 +148,13 @@ public class AccountsController {
         accountsService.addPaymentAccount(accountNumber);
 
         return "redirect:/home";
+    }
+
+    @GetMapping("/paymentAccountsByLogin")
+    @ResponseBody
+    public ApiResponse<List<PaymentAccountDto>> paymentAccountsByLogin(
+            @RequestParam String login) {
+
+        return accountsService.paymentAccountsByLogin(login);
     }
 }

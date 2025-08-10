@@ -36,4 +36,17 @@ public class TransferController {
         }
         return "redirect:/home";
     }
+
+    @PostMapping("/transferToUser")
+    public String transferToUser(
+            @ModelAttribute("transferRequest") TransferRequest transferRequest,
+            RedirectAttributes redirectAttributes) {
+        ApiResponse<Void> apiResponse = transferService.transferRequest(transferRequest);
+        log.info("[FrontUI] TransferController: transfer to user api response {}", apiResponse);
+        if (!apiResponse.isSuccess()) {
+            log.info("[FrontUI] TransferController: transfer to user api message {}", apiResponse.getMessage());
+            redirectAttributes.addFlashAttribute("transferToUserError", apiResponse.getMessage());
+        }
+        return "redirect:/home";
+    }
 }

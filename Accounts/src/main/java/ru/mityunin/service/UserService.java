@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.AuthRequest;
 import ru.mityunin.dto.PaymentAccountDto;
 import ru.mityunin.dto.UserDto;
@@ -13,6 +14,7 @@ import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
 import ru.mityunin.repository.UserRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,26 @@ public class UserService {
 
     public User findByLogin(String login) {
         return userRepository.findByLogin(login).orElse(null);
+    }
+
+    public ApiResponse<List<UserDto>> findAllExceptLogin(String login) {
+        List<UserDto> userList = userRepository
+                .findAll()
+                .stream()
+                .filter(user -> !user.getLogin().equals(login))
+                .map(user -> userMapper.userToUserDto(user))
+                .toList();
+        return ApiResponse.success("List of users, except " + login, userList);
+    }
+
+    public ApiResponse<List<PaymentAccountDto>> paymentAccountsByLogin(String login) {
+        User user = userRepository.findByLogin(login).get();
+        List<PaymentAccountDto> paymentAccountDtoList = user.getPaymentAccounts()
+                .stream()
+                .map(userMapper::paymentAccountToPaymentAccountDto)
+                .toList();
+
+        return ApiResponse.success("List of payment accounts fpr " + login, paymentAccountDtoList);
     }
 
 

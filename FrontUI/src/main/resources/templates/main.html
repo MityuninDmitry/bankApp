@@ -16,6 +16,7 @@
 <div th:replace="~{fragments/cash-operations :: cashOperations(${userDto})}"></div>
 <div th:replace="~{fragments/currencies :: currencies(${currencies})}"></div>
 <div th:replace="~{fragments/transfer-money :: transferMoney(${userDto})}"></div>
+<div th:replace="~{fragments/transfer-to-user :: transferToUser(${userDto}, ${allUsers})}"></div>
 
 <div th:replace="~{fragments/user-profile :: notAuthenticated}"></div>
 </body>

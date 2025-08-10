@@ -158,4 +158,29 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(paymentAccountApiResponse);
         }
     }
+
+    @GetMapping("/findAllExcept/{login}")
+    public ResponseEntity<ApiResponse<List<UserDto>>> getUsersExceptLogin(@PathVariable String login) {
+        log.info("[Accounts] UserController getUsersExceptLogin {}", login);
+        ApiResponse<List<UserDto>> response = userService.findAllExceptLogin(login);
+        log.info("[Accounts] UserController response {}", response);
+        if(response.isSuccess() && !response.getData().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("NOT FOUND"));
+        }
+    }
+
+    @GetMapping("/paymentAccounts/{login}")
+    public ResponseEntity<ApiResponse<List<PaymentAccountDto>>> paymentAccountsByLogin(@PathVariable String login) {
+        log.info("[Accounts] UserController getUsersExceptLogin {}", login);
+        ApiResponse<List<PaymentAccountDto>> response = userService.paymentAccountsByLogin(login);
+        log.info("[Accounts] UserController response {}", response);
+        if(response.isSuccess() && !response.getData().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("NOT FOUND"));
+        }
+    }
+
 }

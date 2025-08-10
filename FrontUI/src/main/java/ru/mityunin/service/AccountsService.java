@@ -8,15 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
-import ru.mityunin.dto.AuthRequest;
-import ru.mityunin.dto.PaymentAccountDto;
-import ru.mityunin.dto.UserDto;
-import ru.mityunin.dto.UserRegistrationRequest;
+import ru.mityunin.dto.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AccountsService {
@@ -52,6 +48,28 @@ public class AccountsService {
         userDto.getPaymentAccounts().sort(Comparator.comparing(PaymentAccountDto::getAccountNumber));
         return userDto;
     }
+
+    public ApiResponse<List<UserDto>> getAllUsersExcept(String login) {
+        log.info("[Front UI] AccountsService getAllUsersExcept: {}", login);
+        String url = accountsServiceUrl + "/accounts/findAllExcept/" + login;
+        ApiResponse<UserDto[]> response = restTemplateHelper.getForApiResponse(url, UserDto[].class);
+        log.info("[Front UI] AccountsService getAllUsersExcept response: {}", response);
+        return new ApiResponse<>(
+                response.isSuccess(),
+                response.getMessage(),
+                response.getData() != null ? Arrays.asList(response.getData()) : null
+        );
+    }
+    public ApiResponse<List<PaymentAccountDto>> paymentAccountsByLogin(String login) {
+        String url = accountsServiceUrl + "/accounts/paymentAccounts/" + login;
+        ApiResponse<PaymentAccountDto[]> response = restTemplateHelper.getForApiResponse(url, PaymentAccountDto[].class);
+        return new ApiResponse<>(
+                response.isSuccess(),
+                response.getMessage(),
+                response.getData() != null ? Arrays.asList(response.getData()) : null
+        );
+    }
+
 
     public boolean deletePaymentAccount(String accountNumber) {
         log.info("Attempting to delete accountNumber: {}", accountNumber);
