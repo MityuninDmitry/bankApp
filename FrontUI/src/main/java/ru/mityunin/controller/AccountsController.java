@@ -43,18 +43,24 @@ public class AccountsController {
     @PostMapping("/delete")
     public String deleteUser(Authentication authentication,
                              HttpServletRequest request,
-                             HttpServletResponse response) {
+                             HttpServletResponse response,
+                             RedirectAttributes redirectAttributes) {
         if (authentication != null && authentication.isAuthenticated()) {
             String login = authentication.getName();
 
             // Удаляем аккаунт
-            accountsService.deleteUser(login);
+            ApiResponse<Void> deleteResponse = accountsService.deleteUser(login);
+            if (deleteResponse.isSuccess()) {
+                // Разлогиниваем пользователя
+                new SecurityContextLogoutHandler().logout(request, response, authentication);
+                // Очищаем контекст безопасности
+                SecurityContextHolder.clearContext();
+            } else {
 
-            // Разлогиниваем пользователя
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
+                redirectAttributes.addFlashAttribute("deleteUserError", deleteResponse.getMessage());
+                return "redirect:/home";
+            }
 
-            // Очищаем контекст безопасности
-            SecurityContextHolder.clearContext();
         }
 
         return "redirect:/login?delete";

@@ -14,6 +14,7 @@ import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
 import ru.mityunin.repository.UserRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,11 +74,17 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String login) {
+    public ApiResponse<Void> deleteUser(String login) {
         User user = findByLogin(login);
+        for (PaymentAccount paymentAccount: user.getPaymentAccounts()) {
+            if (paymentAccount.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                return ApiResponse.error("Счет " + paymentAccount.getAccountNumber() + " имеет ненулевой баланс. Операция отклонена");
+            }
+        }
         if (user != null) {
             userRepository.delete(user);
         }
+        return ApiResponse.success("Успех удаления аккаунта");
     }
 
     @Transactional

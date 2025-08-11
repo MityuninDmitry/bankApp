@@ -91,11 +91,11 @@ public class AccountsService {
         return restTemplateHelper.postForApiResponse(url,registrationRequest,UserDto.class).getData();
     }
 
-    public boolean deleteUser(String login) {
+    public ApiResponse<Void> deleteUser(String login) {
         log.info("Deleting user: {}", login);
         String url = accountsServiceUrl + "/accounts/delete";
 
-        return restTemplateHelper.postForApiResponse(url,login, Void.class).isSuccess();
+        return restTemplateHelper.postForApiResponse(url, login, Void.class);
     }
 
     public boolean updatePassword(AuthRequest authRequest) {

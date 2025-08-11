@@ -75,9 +75,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("NO SUCH USER"));
         }
 
-        userService.deleteUser(login);
+        ApiResponse<Void> response = userService.deleteUser(login);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Success user deletion by login"));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/update/password")
