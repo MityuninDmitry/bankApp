@@ -72,7 +72,12 @@ services:
     ports:
       - "8088:8088"
     environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts?currentSchema=notifications
+      SPRING_DATASOURCE_USERNAME: accounts_user
+      SPRING_DATASOURCE_PASSWORD: accounts_password
       SERVER_PORT: 8088
+    depends_on:
+      - accounts-db
 
   accounts-db:
     image: postgres:latest
