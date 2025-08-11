@@ -6,7 +6,7 @@
     /* Упрощенные и более надежные стили таблицы */
     .currency-table {
       width: 100%;
-      border-collapse: collapse; /* Возвращаем collapse */
+      border-collapse: collapse;
       margin: 20px 0;
       font-family: Arial, sans-serif;
       border: 2px solid #333;
@@ -47,24 +47,22 @@
 <body>
 <!-- Блок с информацией о валютах -->
 <div th:fragment="currencies(currencies)">
-  <h3>Exchange Currencies</h3>
+  <h3>Exchange Rates</h3>
 
-  <div id="currencies-container"> <!-- Добавлен контейнер для обновления -->
+  <div id="currencies-container">
     <table class="currency-table">
       <thead>
       <tr>
-        <th>Date/Time</th>
-        <th>Currency From</th>
-        <th>Currency To</th>
-        <th>Exchange Rate</th>
+        <th>Currency</th>
+        <th>Buy Price</th>
+        <th>Sell Price</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="currency : ${currencies}">
-        <td th:text="${#temporals.format(currency.localDateTime, 'dd.MM.yyyy HH:mm')}"></td>
-        <td th:text="${currency.currencyFrom}"></td>
-        <td th:text="${currency.currencyTo}"></td>
-        <td class="text-right" th:text="${currency.value}"></td>
+        <td th:text="${currency.currency}"></td>
+        <td class="text-right" th:text="${currency.buyPrice}"></td>
+        <td class="text-right" th:text="${currency.sellPrice}"></td>
       </tr>
       </tbody>
     </table>

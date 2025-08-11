@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.ExchangeCurrencyDto;
+import ru.mityunin.dto.ExchangeCurrencyFrontUIDto;
 import ru.mityunin.dto.PaymentAccountDto;
 import ru.mityunin.dto.UserDto;
 import ru.mityunin.service.AccountsService;
@@ -31,7 +32,7 @@ public class HomeController {
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             UserDto userDto = accountsService.getUserByLogin(username);
-            ApiResponse<List<ExchangeCurrencyDto>> response = exchangeService.currencies();
+            ApiResponse<List<ExchangeCurrencyFrontUIDto>> response = exchangeService.currencies();
             ApiResponse<List<UserDto>> allUsers = accountsService.getAllUsersExcept(username);
 
             if (response != null && response.isSuccess() && response.getData() != null) {
