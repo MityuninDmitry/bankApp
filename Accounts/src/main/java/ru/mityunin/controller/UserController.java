@@ -15,7 +15,6 @@ import ru.mityunin.service.UserService;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/accounts")
@@ -55,7 +54,7 @@ public class UserController {
 
         User savedUser = userService.saveUser(user);
 
-        notificationService.sendNotification(user.getLogin(), "Успешно зарегестрирован");
+        notificationService.sendNotification(user.getLogin(), "Успешно зарегистрирован");
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("REGISTERED",userMapper.userToUserDto(savedUser)));
     }
@@ -89,6 +88,7 @@ public class UserController {
     public  ResponseEntity<ApiResponse<Void>> updateUserPassword(@RequestBody AuthRequest authRequest) {
         log.info("Update User Password request for: {}", authRequest.getLogin());
         userService.updateUserPassword(authRequest);
+        notificationService.sendNotification(authRequest.getLogin(), "Пароль обновлен!");
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Password updated"));
     }
 
@@ -96,13 +96,15 @@ public class UserController {
     public ResponseEntity<ApiResponse<Void>> updateUserInfo(@RequestBody UserDto userDto) {
 
         userService.updateUserInfo(userDto);
+        notificationService.sendNotification(userDto.getLogin(), "Данные обновлены");
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("User updated"));
     }
 
     @PostMapping("/delete/paymentAccount")
-    public ResponseEntity<ApiResponse<Void>> deletePaymentAccount(@RequestBody Map<String, String> request) {
-        String accountNumber = request.get("accountNumber");
+    public ResponseEntity<ApiResponse<Void>> deletePaymentAccount(@RequestBody PaymentAccountWithLoginDto requestDto) {
+        String accountNumber = requestDto.getAccountNumber();
         if (accountNumber == null || accountNumber.isBlank()) {
+            notificationService.sendNotification(requestDto.getLogin(), "Счет " + requestDto.getAccountNumber() + ": ошибка удаления");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Attempt to delete account with empty account number"));
         }
 
@@ -110,45 +112,53 @@ public class UserController {
             boolean deleted = accountService.deletePaymentAccount(accountNumber);
             if (deleted) {
                 log.info("Account {} successfully deleted", accountNumber);
+                notificationService.sendNotification(requestDto.getLogin(), "Счет удален");
                 return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("SUCCESS DELETING"));
             } else {
                 log.warn("Account {} not found or already deleted", accountNumber);
-
+                notificationService.sendNotification(requestDto.getLogin(), "Счет либо уже удален, либо не найден");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("NOT FOUND OR ALREADY DELETED"));
             }
         } catch (Exception e) {
             log.error("Error deleting account {}: {}", accountNumber, e.getMessage(), e);
+            notificationService.sendNotification(requestDto.getLogin(), "Ошибка " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("SOME INTERNAL ERROR"));
         }
     }
 
     @PostMapping("/add/paymentAccount")
-    public ResponseEntity<ApiResponse<Void>> addPaymentAccount(@RequestBody Map<String, String> request) {
-        String accountNumber = request.get("accountNumber");
+    public ResponseEntity<ApiResponse<Void>> addPaymentAccount(@RequestBody PaymentAccountWithLoginDto request) {
+        String accountNumber = request.getAccountNumber();
         if (accountNumber == null || accountNumber.isBlank()) {
+            notificationService.sendNotification(request.getLogin(), "Вы не выслали номер счета для добавления");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("WHERE IS ACCOUNT NUMBER IN YOUR REQUEST?"));
         }
 
         try {
             boolean success = accountService.addPaymentAccount(accountNumber);
             if (success) {
+                notificationService.sendNotification(request.getLogin(), "Счет добавлен");
                 return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Payment Account added"));
             } else {
+                notificationService.sendNotification(request.getLogin(), "Счет не найден или удален");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Payment Account not found or already deleted"));
             }
         } catch (Exception e) {
             log.error("Error add account {}: {}", accountNumber, e.getMessage(), e);
+            notificationService.sendNotification(request.getLogin(), "Ошибка " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("SOME INTERNAL ERROR"));
         }
     }
 
     @PostMapping("/processOperation")
-    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
-        log.info("[Accounts] processOperation {}",cashOperationRequest);
-        ApiResponse<Void> apiResponse = accountService.processOperation(cashOperationRequest);
+    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequestDto cashOperationRequestDto) {
+        log.info("[Accounts] processOperation {}", cashOperationRequestDto);
+        ApiResponse<Void> apiResponse = accountService.processOperation(cashOperationRequestDto);
         if (apiResponse.isSuccess()) {
+            notificationService.sendNotification(cashOperationRequestDto.getLogin(), apiResponse.getMessage());
             return ResponseEntity.ok(apiResponse);
         } else {
+            notificationService.sendNotification(cashOperationRequestDto.getLogin(), apiResponse.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
         }
 

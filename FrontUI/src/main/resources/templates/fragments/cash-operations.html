@@ -58,6 +58,7 @@
         <td>
           <form th:action="@{/cash/action}" method="post">
             <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
+            <input type="hidden" name="login" th:value="${userDto.login}">
             <input type="number" name="money" step="0.01" min="0.01"
                    class="amount-input" required>
             <button type="submit" name="action" value="DEPOSIT"

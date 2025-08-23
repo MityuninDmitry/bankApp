@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.CashOperationRequest;
+import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.service.CashService;
 
 @Controller
@@ -26,9 +26,9 @@ public class CashController {
 
     @PostMapping("/action")
     public String actionWithPaymentAccount(
-            @Valid @ModelAttribute("cashOperationRequest") CashOperationRequest cashOperationRequest,
+            @Valid @ModelAttribute("cashOperationRequestDto") CashOperationRequestDto cashOperationRequestDto,
             RedirectAttributes redirectAttributes) {
-        ApiResponse<Void> apiResponse = cashService.processOperation(cashOperationRequest);
+        ApiResponse<Void> apiResponse = cashService.processOperation(cashOperationRequestDto);
         log.info("CashController: api response {}", apiResponse);
         if (!apiResponse.isSuccess()) {
             log.info("CashController: api message {}", apiResponse.getMessage());

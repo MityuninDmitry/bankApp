@@ -1,6 +1,5 @@
 package ru.mityunin.controller;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -9,9 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.CashOperationRequest;
 import ru.mityunin.dto.TransferRequest;
-import ru.mityunin.service.CashService;
 import ru.mityunin.service.TransferService;
 
 @Controller

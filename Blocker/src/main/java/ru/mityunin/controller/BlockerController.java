@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.CashOperationRequest;
+import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.service.BlockerService;
+import ru.mityunin.service.NotificationService;
 
 @Controller
 @RequestMapping("/blocker")
@@ -18,16 +19,21 @@ public class BlockerController {
 
     private static final Logger log = LoggerFactory.getLogger(BlockerController.class);
     private final BlockerService blockerService;
+    private final NotificationService notificationService;
 
-    public BlockerController(BlockerService blockerService) {
+    public BlockerController(BlockerService blockerService, NotificationService notificationService) {
         this.blockerService = blockerService;
+        this.notificationService = notificationService;
     }
 
 
     @PostMapping("/checkOperation")
-    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
-        log.info("CashController: process operation {}", cashOperationRequest);
-        ApiResponse<Void> apiResponse = blockerService.isSuspiciousOperation(cashOperationRequest);
+    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequestDto cashOperationRequestDto) {
+        log.info("CashController: process operation {}", cashOperationRequestDto);
+        ApiResponse<Void> apiResponse = blockerService.isSuspiciousOperation(cashOperationRequestDto);
+        if (!apiResponse.isSuccess()) {
+            notificationService.sendNotification(cashOperationRequestDto.getLogin(), "Подозрительная операция. Повторите снова.");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 

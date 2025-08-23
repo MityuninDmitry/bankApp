@@ -10,23 +10,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.CashOperationRequest;
+import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.service.CashService;
 
 @Controller
 @RequestMapping("/cash")
 public class CashController {
     private static final Logger log = LoggerFactory.getLogger(CashController.class);
-    private CashService cashService;
+    private final CashService cashService;
 
     public CashController(CashService cashService) {
         this.cashService = cashService;
     }
 
     @PostMapping("/processOperation")
-    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequest cashOperationRequest) {
-        log.info("CashController: process operation {}", cashOperationRequest);
-        ApiResponse<Void> apiResponse = cashService.processOperation(cashOperationRequest);
+    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequestDto cashOperationRequestDto) {
+        log.info("CashController: process operation {}", cashOperationRequestDto);
+        ApiResponse<Void> apiResponse = cashService.processOperation(cashOperationRequestDto);
         if (apiResponse.isSuccess()) {
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         } else {

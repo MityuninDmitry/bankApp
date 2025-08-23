@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.CashOperationRequest;
+import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.dto.PaymentAccountDto;
 import ru.mityunin.mapper.UserMapper;
 import ru.mityunin.model.CashOperation;
@@ -93,25 +93,25 @@ public class AccountService {
     }
 
     @Transactional
-    public ApiResponse<Void> processOperation(CashOperationRequest cashOperationRequest) {
-        String accountNumber = cashOperationRequest.getAccountNumber();
+    public ApiResponse<Void> processOperation(CashOperationRequestDto cashOperationRequestDto) {
+        String accountNumber = cashOperationRequestDto.getAccountNumber();
         PaymentAccount paymentAccount = paymentAccountRepository.findByAccountNumber(accountNumber).getFirst();
 
-        if (cashOperationRequest.getAction().equals(CashOperation.DEPOSIT)) {
-            paymentAccount.setBalance(paymentAccount.getBalance().add(cashOperationRequest.getMoney()));
+        if (cashOperationRequestDto.getAction().equals(CashOperation.DEPOSIT)) {
+            paymentAccount.setBalance(paymentAccount.getBalance().add(cashOperationRequestDto.getMoney()));
             paymentAccountRepository.save(paymentAccount);
 
-        } else if (cashOperationRequest.getAction().equals(CashOperation.WITHDRAWN)) {
-            log.info("[Accounts] current money value {}, try withdrawn {}", paymentAccount.getBalance(), cashOperationRequest.getMoney() );
-            if (paymentAccount.getBalance().compareTo(cashOperationRequest.getMoney()) < 0) {
-                return ApiResponse.error("NOT ENOUGHT MONEY");
+        } else if (cashOperationRequestDto.getAction().equals(CashOperation.WITHDRAWN)) {
+            log.info("[Accounts] current money value {}, try withdrawn {}", paymentAccount.getBalance(), cashOperationRequestDto.getMoney() );
+            if (paymentAccount.getBalance().compareTo(cashOperationRequestDto.getMoney()) < 0) {
+                return ApiResponse.error("Не достаточно денег. На балансе: " + paymentAccount.getBalance() + ", списывается: " + cashOperationRequestDto.getMoney());
             } else {
                 paymentAccount.setBalance(
-                        paymentAccount.getBalance().subtract(cashOperationRequest.getMoney()));
+                        paymentAccount.getBalance().subtract(cashOperationRequestDto.getMoney()));
                 paymentAccountRepository.save(paymentAccount);
             }
         }
-        return ApiResponse.success("OPERATION SUCCESS");
+        return ApiResponse.success("Успех");
     }
 
     public ApiResponse<PaymentAccountDto> getAccountInfo(String accountNumber) {

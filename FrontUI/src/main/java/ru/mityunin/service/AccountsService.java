@@ -3,11 +3,9 @@ package ru.mityunin.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.*;
@@ -17,13 +15,10 @@ import java.util.*;
 @Service
 public class AccountsService {
     private static final Logger log = LoggerFactory.getLogger(AccountsService.class);
-    private final RestTemplate restTemplate;
     private final String accountsServiceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public AccountsService(RestTemplate restTemplate,
-                           @Value("${service.accounts.url}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
-        this.restTemplate = restTemplate;
+    public AccountsService(@Value("${service.accounts.url}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }
@@ -72,17 +67,31 @@ public class AccountsService {
 
 
     public boolean deletePaymentAccount(String accountNumber) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+
+        PaymentAccountWithLoginDto requestDto = new PaymentAccountWithLoginDto();
+        requestDto.setAccountNumber(accountNumber);
+        requestDto.setLogin(login);
+
         log.info("Attempting to delete accountNumber: {}", accountNumber);
+
         String url = accountsServiceUrl + "/accounts/delete/paymentAccount";
-        Map<String, String> requestBody = Collections.singletonMap("accountNumber", accountNumber);
-        return restTemplateHelper.postForApiResponse(url,requestBody, Void.class).isSuccess();
+        return restTemplateHelper.postForApiResponse(url,requestDto, Void.class).isSuccess();
     }
 
     public boolean addPaymentAccount(String accountNumber) {
         log.info("Attempting to delete accountNumber: {}", accountNumber);
         String url = accountsServiceUrl + "/accounts/add/paymentAccount";
-        Map<String, String> requestBody = Collections.singletonMap("accountNumber", accountNumber);
-        return restTemplateHelper.postForApiResponse(url,requestBody,Void.class).isSuccess();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+
+        PaymentAccountWithLoginDto requestDto = new PaymentAccountWithLoginDto();
+        requestDto.setAccountNumber(accountNumber);
+        requestDto.setLogin(login);
+
+        return restTemplateHelper.postForApiResponse(url,requestDto,Void.class).isSuccess();
     }
 
     public UserDto registerUser(UserRegistrationRequest registrationRequest) {

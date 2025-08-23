@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
-import ru.mityunin.dto.CashOperationRequest;
 import ru.mityunin.dto.NotificationDto;
 import ru.mityunin.dto.NotificationRequestDto;
-import ru.mityunin.dto.PaymentAccountDto;
 
 import java.util.Arrays;
 import java.util.List;

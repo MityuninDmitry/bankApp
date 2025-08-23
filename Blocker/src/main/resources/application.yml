@@ -3,3 +3,6 @@ server:
 spring:
   application:
     name: Blocker
+service:
+  notifications:
+    url: http://notifications-service:8088

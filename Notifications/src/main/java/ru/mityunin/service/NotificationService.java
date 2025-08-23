@@ -40,6 +40,7 @@ public class NotificationService {
         return ApiResponse.success("Список нотификаций",notificationDtoList);
     }
 
+    @Transactional
     public ApiResponse<Void> addNotification(AddNotificationRequestDto requestDto) {
         try {
             Notification notification = new Notification();

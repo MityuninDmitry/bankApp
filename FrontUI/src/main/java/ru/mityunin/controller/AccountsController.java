@@ -136,14 +136,8 @@ public class AccountsController {
     }
 
     @PostMapping("/update/userInfo/deleteAccount")
-    public String deleteAccount(@RequestParam String accountNumber, RedirectAttributes redirectAttributes) {
-
-        boolean isDeleted = accountsService.deletePaymentAccount(accountNumber);
-
-        if (!isDeleted) {
-            redirectAttributes.addFlashAttribute("accountDeletionError",
-                    "Account balance should be zero or service not available, try later");
-        }
+    public String deleteAccount(@RequestParam String accountNumber) {
+        accountsService.deletePaymentAccount(accountNumber);
 
         return "redirect:/home";
     }

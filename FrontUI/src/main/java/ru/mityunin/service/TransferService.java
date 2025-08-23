@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
-import ru.mityunin.dto.CashOperationRequest;
 import ru.mityunin.dto.TransferRequest;
 
 @Service
