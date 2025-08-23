@@ -12,6 +12,7 @@
     </form>
 </div>
 <!-- Подключаем фрагмент с профилем -->
+<div th:replace="~{fragments/notifications :: notifications(${notifications})}"></div>
 <div th:replace="~{fragments/user-profile :: userProfile(${userDto})}"></div>
 <div th:replace="~{fragments/cash-operations :: cashOperations(${userDto})}"></div>
 <div th:replace="~{fragments/currencies :: currencies(${currencies})}"></div>

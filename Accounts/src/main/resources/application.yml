@@ -27,7 +27,9 @@ management:
   endpoint:
     health:
       show-details: always
-
+service:
+  notifications:
+    url: http://notifications-service:8088
 
 logging:
   level:

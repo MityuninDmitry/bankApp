@@ -10,6 +10,7 @@ import ru.mityunin.mapper.UserMapper;
 import ru.mityunin.model.PaymentAccount;
 import ru.mityunin.model.User;
 import ru.mityunin.service.AccountService;
+import ru.mityunin.service.NotificationService;
 import ru.mityunin.service.UserService;
 import org.springframework.http.ResponseEntity;
 
@@ -23,11 +24,13 @@ public class UserController {
     private final UserService userService;
     private final AccountService accountService;
     private final UserMapper userMapper;
+    private final NotificationService notificationService;
 
-    public UserController(UserService userService, AccountService accountService, UserMapper userMapper) {
+    public UserController(UserService userService, AccountService accountService, UserMapper userMapper, NotificationService notificationService) {
         this.userService = userService;
         this.accountService = accountService;
         this.userMapper = userMapper;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/{login}")
@@ -51,6 +54,8 @@ public class UserController {
         user.setPaymentAccounts(paymentAccounts);
 
         User savedUser = userService.saveUser(user);
+
+        notificationService.sendNotification(user.getLogin(), "Успешно зарегестрирован");
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("REGISTERED",userMapper.userToUserDto(savedUser)));
     }

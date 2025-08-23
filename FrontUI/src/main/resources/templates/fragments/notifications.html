@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="notifications(notifications)">
+  <h3>Notifications</h3>
+
+  <div id="notifications-refresh-indicator">Last updated: <span id="notifications-last-updated"></span></div>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+
+      // Функция для обновления уведомлений
+      function refreshNotifications() {
+        fetch('/notifications/get', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(notifications => {
+          // Обновляем время
+          updateLastUpdatedTime();
+
+          // Если есть уведомления - показываем alert
+          if (notifications && notifications.length > 0) {
+            showNotificationsAlert(notifications);
+          }
+        })
+        .catch(error => {
+          console.error('Error refreshing notifications:', error);
+        });
+      }
+
+      // Показать alert с уведомлениями
+      function showNotificationsAlert(notifications) {
+        // Формируем текст для alert
+        let alertText = '=== NOTIFICATIONS ===\n\n';
+
+        notifications.forEach((notification, index) => {
+          const date = new Date(notification.localDateTime);
+          const formattedDate = date.toLocaleString();
+
+          alertText += `${index + 1}. [${formattedDate}]\n`;
+          alertText += `${notification.message}\n\n`;
+        });
+
+        alertText += '=====================';
+
+        // Показываем alert
+        alert(alertText);
+      }
+
+      // Обновить время последнего обновления
+      function updateLastUpdatedTime() {
+        const now = new Date();
+        document.getElementById('notifications-last-updated').textContent = now.toLocaleString();
+      }
+
+      // Устанавливаем интервал обновления (4 секунды)
+      const refreshInterval = 1000;
+      refreshNotifications(); // Первая загрузка
+      setInterval(refreshNotifications, refreshInterval);
+
+      // Инициализация времени
+      updateLastUpdatedTime();
+    });
+    /*]]>*/
+  </script>
+</div>
+</body>
+</html>

@@ -33,6 +33,8 @@ service:
     url: http://exchange-service:8085
   transfer:
     url: http://transfer-service:8084
+  notifications:
+    url: http://notifications-service:8088
 logging:
   level:
     root: INFO
