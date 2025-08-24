@@ -106,7 +106,7 @@
         <label for="transferToUserValue">Amount:</label>
         <input type="number" id="transferToUserValue" name="value" class="transfer-to-user-input" step="0.01" min="0.01" required disabled>
       </div>
-
+      <input type="hidden" name="login" th:value="${userDto.login}">
       <!-- Кнопка перевода -->
       <div class="transfer-to-user-hidden" id="transferToUserSubmitSection">
         <button type="submit" class="transfer-to-user-btn">Transfer Money</button>

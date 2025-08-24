@@ -37,4 +37,9 @@ public class BlockerController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @PostMapping("/isBlockerOperation")
+    public ResponseEntity<ApiResponse<Void>> processOperation() {
+        ApiResponse<Void> apiResponse = blockerService.isSuspiciousOperation();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

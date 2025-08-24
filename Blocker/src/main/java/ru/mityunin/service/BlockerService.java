@@ -18,4 +18,12 @@ public class BlockerService {
         }
         return ApiResponse.success("Все отлично. Работаем.");
     }
+
+    public ApiResponse<Void> isSuspiciousOperation() {
+        int result = (int) (Math.random() * 2);
+        if (result == 1) {
+            return ApiResponse.error("Подозрительная операция. Отклонено!");
+        }
+        return ApiResponse.success("Все отлично. Работаем.");
+    }
 }

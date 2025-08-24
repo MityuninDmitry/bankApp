@@ -8,3 +8,7 @@ service:
     url: http://accounts-service:8082
   exchange:
     url: http://exchange-service:8085
+  notifications:
+    url: http://notifications-service:8088
+  blocker:
+    url: http://blocker-service:8087

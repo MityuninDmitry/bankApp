@@ -93,7 +93,7 @@
         <label for="value">Amount:</label>
         <input type="number" id="value" name="value" step="0.01" min="0.01" required>
       </div>
-
+      <input type="hidden" name="login" th:value="${userDto.login}">
       <!-- Кнопка перевода -->
       <div>
         <button type="submit" class="transfer-btn">Transfer Money</button>

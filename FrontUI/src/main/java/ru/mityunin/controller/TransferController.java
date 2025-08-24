@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.TransferRequest;
+import ru.mityunin.dto.TransferRequestDto;
 import ru.mityunin.service.TransferService;
 
 @Controller
@@ -23,9 +23,10 @@ public class TransferController {
 
     @PostMapping("/transferRequest")
     public String transferRequest(
-            @ModelAttribute("transferRequest") TransferRequest transferRequest,
+            @ModelAttribute("transferRequestDto") TransferRequestDto transferRequestDto,
             RedirectAttributes redirectAttributes) {
-        ApiResponse<Void> apiResponse = transferService.transferRequest(transferRequest);
+        log.info("[FrontUI] TransferController transferRequestDto: " + transferRequestDto);
+        ApiResponse<Void> apiResponse = transferService.transferRequest(transferRequestDto);
         log.info("[FrontUI] TransferController: api response {}", apiResponse);
         if (!apiResponse.isSuccess()) {
             log.info("[FrontUI] TransferController: api message {}", apiResponse.getMessage());
@@ -36,9 +37,10 @@ public class TransferController {
 
     @PostMapping("/transferToUser")
     public String transferToUser(
-            @ModelAttribute("transferRequest") TransferRequest transferRequest,
+            @ModelAttribute("transferRequestDto") TransferRequestDto transferRequestDto,
             RedirectAttributes redirectAttributes) {
-        ApiResponse<Void> apiResponse = transferService.transferRequest(transferRequest);
+        log.info("[FrontUI] TransferController transferRequestDto: " + transferRequestDto);
+        ApiResponse<Void> apiResponse = transferService.transferRequest(transferRequestDto);
         log.info("[FrontUI] TransferController: transfer to user api response {}", apiResponse);
         if (!apiResponse.isSuccess()) {
             log.info("[FrontUI] TransferController: transfer to user api message {}", apiResponse.getMessage());

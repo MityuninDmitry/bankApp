@@ -1,19 +1,17 @@
 package ru.mityunin.controller;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.dto.CashOperationRequest;
-import ru.mityunin.dto.TransferRequest;
+import ru.mityunin.dto.TransferRequestDto;
+import ru.mityunin.service.BlockerService;
+import ru.mityunin.service.NotificationService;
 import ru.mityunin.service.TransferService;
 
 @Controller
@@ -21,19 +19,31 @@ import ru.mityunin.service.TransferService;
 public class TransferController {
     private static final Logger log = LoggerFactory.getLogger(TransferController.class);
     private final TransferService transferService;
-
-    public TransferController(TransferService transferService) {
+    private final NotificationService notificationService;
+    private final BlockerService blockerService;
+    public TransferController(TransferService transferService, NotificationService notificationService, BlockerService blockerService) {
         this.transferService = transferService;
+        this.notificationService = notificationService;
+        this.blockerService = blockerService;
     }
 
     @PostMapping("/transferRequest")
-    public ResponseEntity<ApiResponse<Void>> transferRequest(@RequestBody TransferRequest transferRequest) {
-        log.info("[Transfer] TransferController: transferRequest {}", transferRequest);
-        ApiResponse<Void> apiResponse = transferService.transferOperation(transferRequest);
-        if (apiResponse.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    public ResponseEntity<ApiResponse<Void>> transferRequest(@RequestBody TransferRequestDto transferRequestDto) {
+        log.info("[Transfer] TransferController: transferRequestDto {}", transferRequestDto);
+        ApiResponse<Void> isBlockerResponse = blockerService.isBlockerOperation();
+        if (isBlockerResponse.isSuccess()) {
+            ApiResponse<Void> apiResponse = transferService.transferOperation(transferRequestDto);
+            if (apiResponse.isSuccess()) {
+                notificationService.sendNotification(transferRequestDto.getLogin(), apiResponse.getMessage());
+                return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+            } else {
+                notificationService.sendNotification(transferRequestDto.getLogin(), apiResponse.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            notificationService.sendNotification(transferRequestDto.getLogin(), isBlockerResponse.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(isBlockerResponse);
         }
+
     }
 }

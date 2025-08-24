@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
-import ru.mityunin.dto.TransferRequest;
+import ru.mityunin.dto.TransferRequestDto;
 
 @Service
 public class TransferService {
@@ -19,9 +19,9 @@ public class TransferService {
         this.restTemplateHelper = restTemplateHelper;
     }
 
-    public ApiResponse<Void> transferRequest(TransferRequest transferRequest) {
-        log.info("Cash operation request {}", transferRequest);
+    public ApiResponse<Void> transferRequest(TransferRequestDto transferRequestDto) {
+        log.info("Cash operation request {}", transferRequestDto);
         String url = transferServiceUrl + "/api/transferRequest";
-        return restTemplateHelper.postForApiResponse(url, transferRequest, Void.class);
+        return restTemplateHelper.postForApiResponse(url, transferRequestDto, Void.class);
     }
 }
