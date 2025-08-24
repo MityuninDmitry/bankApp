@@ -17,7 +17,7 @@ import ru.mityunin.service.ExchangeGeneratorService;
 import java.util.List;
 
 @Controller
-@RequestMapping("/exchangegenerator")
+@RequestMapping("/api")
 public class ExchangeGeneratorController {
 
     private static final Logger log = LoggerFactory.getLogger(ExchangeGeneratorController.class);

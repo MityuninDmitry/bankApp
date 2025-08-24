@@ -24,7 +24,10 @@ public class TransferService {
     private final String exchangeServiceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public TransferService(@Value("${service.accounts.url}") String accountsServiceUrl, @Value("${service.exchange.url}") String exchangeServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public TransferService(
+            @Value("${service.url.accounts}") String accountsServiceUrl,
+            @Value("${service.url.exchange}") String exchangeServiceUrl,
+            RestTemplateHelper restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.exchangeServiceUrl = exchangeServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
@@ -34,29 +37,24 @@ public class TransferService {
     public ApiResponse<Void> transferOperation(TransferRequestDto transferRequestDto) {
         log.info("[TransferService] transferOperation {}", transferRequestDto);
         // ссылки на эндпоинты
-        String accountsUrl = accountsServiceUrl + "/accounts/processOperation";
-        String accountInfoUrl = accountsServiceUrl + "/accounts/accountInfo";
-        String exchangeUrl = exchangeServiceUrl + "/exchange/currencies";
+        String accountsUrl = accountsServiceUrl + "/api/processOperation";
+        String accountInfoUrl = accountsServiceUrl + "/api/accountInfo";
+        String exchangeUrl = exchangeServiceUrl + "/api/currencies";
 
         // выясняем тип валюты счетов откуда и куда перевод
         ApiResponse<PaymentAccountDto> accountInfoFrom = restTemplateHelper.postForApiResponse(accountInfoUrl, transferRequestDto.getAccountNumberFrom(), PaymentAccountDto.class);
         CurrencyType fromCurrency = accountInfoFrom.getData().getCurrency(); // валюта счета откуда перевод
-        log.info("[TransferService] fromCurrency {}", fromCurrency);
+
         ApiResponse<PaymentAccountDto> accountInfoTo = restTemplateHelper.postForApiResponse(accountInfoUrl, transferRequestDto.getAccountNumberTo(), PaymentAccountDto.class);
         CurrencyType toCurrency = accountInfoTo.getData().getCurrency(); // валюта счета куда перевод
-        log.info("[TransferService] toCurrency {}", toCurrency);
+
         // получем текущие курсы валют
         ApiResponse<ExchangeCurrencyDto[]> currenciesResponse = restTemplateHelper.getForApiResponse(exchangeUrl, ExchangeCurrencyDto[].class);
-        log.info("[TransferService] currenciesResponse {}", currenciesResponse);
         BigDecimal money = transferRequestDto.getValue(); // валюта исходного счета
         ExchangeCurrencyDto exchangeCurrencyDto = getExchangeCurrencyDto(fromCurrency, CurrencyType.RUB, currenciesResponse);
-        log.info("[TransferService] exchangeCurrencyDto from fromCurrency to RUB {}", exchangeCurrencyDto);
         money = money.multiply(BigDecimal.valueOf(exchangeCurrencyDto.getValue())); // преобразование к рублям
         exchangeCurrencyDto = getExchangeCurrencyDto(CurrencyType.RUB, toCurrency, currenciesResponse);
-        log.info("[TransferService] money {}", money);
-        log.info("[TransferService] exchangeCurrencyDto from RUB to toCurrency {}", exchangeCurrencyDto);
         money = money.divide(BigDecimal.valueOf(exchangeCurrencyDto.getValue()), 2, RoundingMode.HALF_UP); // преобразование в валюту счета перевода
-        log.info("[TransferService] money {}", money);
 
         // операции снятия и внесения в валюте счета
         CashOperationRequest withdrawnOperation = new CashOperationRequest();

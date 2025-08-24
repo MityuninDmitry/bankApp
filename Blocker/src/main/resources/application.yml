@@ -4,5 +4,5 @@ spring:
   application:
     name: Blocker
 service:
-  notifications:
-    url: http://notifications-service:8088
+  url:
+    notifications: http://notifications-service:8088

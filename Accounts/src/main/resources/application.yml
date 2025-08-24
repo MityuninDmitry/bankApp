@@ -28,8 +28,8 @@ management:
     health:
       show-details: always
 service:
-  notifications:
-    url: http://notifications-service:8088
+  url:
+    notifications: http://notifications-service:8088
 
 logging:
   level:

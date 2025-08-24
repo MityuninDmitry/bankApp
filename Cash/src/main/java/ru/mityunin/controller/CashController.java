@@ -14,7 +14,7 @@ import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.service.CashService;
 
 @Controller
-@RequestMapping("/cash")
+@RequestMapping("/api")
 public class CashController {
     private static final Logger log = LoggerFactory.getLogger(CashController.class);
     private final CashService cashService;

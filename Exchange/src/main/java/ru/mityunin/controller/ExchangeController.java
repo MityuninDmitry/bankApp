@@ -13,7 +13,7 @@ import ru.mityunin.service.ExchangeService;
 import java.util.List;
 
 @Controller
-@RequestMapping("/exchange")
+@RequestMapping("/api")
 public class ExchangeController {
     private final ExchangeService exchangeService;
 

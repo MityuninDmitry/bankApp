@@ -10,5 +10,5 @@ spring:
   application:
     name: Exchange
 service:
-  exchangegenerator:
-    url: http://exchange-generator-service:8086
+  url:
+    exchangegenerator: http://exchange-generator-service:8086

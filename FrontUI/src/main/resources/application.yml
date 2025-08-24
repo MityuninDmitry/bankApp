@@ -23,18 +23,13 @@ spring:
       - /resources/**
       - /webjars/**
 service:
-  accounts:
-    url: http://accounts-service:8082
-  cash:
-    url: http://cash-service:8083
-  exchangegenerator:
-    url: http://exchange-generator-service:8086
-  exchange:
-    url: http://exchange-service:8085
-  transfer:
-    url: http://transfer-service:8084
-  notifications:
-    url: http://notifications-service:8088
+  url:
+    accounts: http://accounts-service:8082
+    cash: http://cash-service:8083
+    exchangegenerator: http://exchange-generator-service:8086
+    exchange: http://exchange-service:8085
+    transfer: http://transfer-service:8084
+    notifications: http://notifications-service:8088
 logging:
   level:
     root: INFO

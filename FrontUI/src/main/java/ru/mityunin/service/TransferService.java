@@ -14,7 +14,7 @@ public class TransferService {
     private final String transferServiceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public TransferService(@Value("${service.transfer.url}") String transferServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public TransferService(@Value("${service.url.transfer}") String transferServiceUrl, RestTemplateHelper restTemplateHelper) {
         this.transferServiceUrl = transferServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }

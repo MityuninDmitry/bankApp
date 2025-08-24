@@ -4,12 +4,10 @@ spring:
   application:
     name: Cash
 service:
-  accounts:
-    url: http://accounts-service:8082
-  blocker:
-    url: http://blocker-service:8087
-  notifications:
-    url: http://notifications-service:8088
+  url:
+    accounts: http://accounts-service:8082
+    blocker: http://blocker-service:8087
+    notifications: http://notifications-service:8088
 logging:
   level:
     ru.mityunin: INFO

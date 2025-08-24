@@ -14,7 +14,7 @@ import ru.mityunin.service.BlockerService;
 import ru.mityunin.service.NotificationService;
 
 @Controller
-@RequestMapping("/blocker")
+@RequestMapping("/api")
 public class BlockerController {
 
     private static final Logger log = LoggerFactory.getLogger(BlockerController.class);
