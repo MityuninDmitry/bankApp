@@ -3,6 +3,18 @@ server:
 spring:
   application:
     name: Transfer
+  config:
+    import: "consul:"
+  cloud:
+    consul:
+      host: consul          # Адрес Consul (по умолчанию localhost)
+      port: 8500               # Порт Consul (8500 по умолчанию)
+      discovery:
+        service-name: service-transfer  # Необязательно, по умолчанию берётся spring.application.name
+      config:
+        enabled: true            # Включаем Consul Config для внешней конфигурации
+        prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
+        defaultContext: application  # Контекст по умолчанию
 service:
   url:
     accounts: http://accounts-service:8082

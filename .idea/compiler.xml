@@ -18,8 +18,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
         </processorPath>
         <module name="Exchange" />
-        <module name="FrontUI" />
         <module name="ExchangeGenerator" />
+        <module name="FrontUI" />
         <module name="Transfer" />
         <module name="Blocker" />
         <module name="Cash" />
