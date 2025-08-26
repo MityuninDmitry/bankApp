@@ -23,4 +23,4 @@ spring:
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    exchangegenerator: http://exchange-generator-service:8086
+    exchangegenerator: http://service-exchange-generator # http://exchange-generator-service:8086

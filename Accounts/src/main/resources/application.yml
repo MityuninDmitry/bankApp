@@ -41,7 +41,7 @@ management:
       show-details: always
 service:
   url:
-    notifications: http://notifications-service:8088
+    notifications: http://service-notifications # http://notifications-service:8088
 
 logging:
   level:

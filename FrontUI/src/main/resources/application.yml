@@ -36,12 +36,12 @@ spring:
       - /webjars/**
 service:
   url:
-    accounts: http://accounts-service:8082
-    cash: http://cash-service:8083
-    exchangegenerator: http://exchange-generator-service:8086
-    exchange: http://exchange-service:8085
-    transfer: http://transfer-service:8084
-    notifications: http://notifications-service:8088
+    accounts: http://service-accounts # http://accounts-service:8082
+    cash: http://service-cash # http://cash-service:8083
+    # exchangegenerator: http://service-exchange-generator # http://exchange-generator-service:8086
+    exchange: http://service-exchange # http://exchange-service:8085
+    transfer: http://service-transfer # http://transfer-service:8084
+    notifications: http://service-notifications # http://notifications-service:8088
 logging:
   level:
     root: INFO

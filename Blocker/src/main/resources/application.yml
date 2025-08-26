@@ -17,4 +17,4 @@ spring:
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    notifications: http://notifications-service:8088
+    notifications: http://service-notifications # http://notifications-service:8088

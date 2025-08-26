@@ -17,9 +17,9 @@ spring:
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    accounts: http://accounts-service:8082
-    blocker: http://blocker-service:8087
-    notifications: http://notifications-service:8088
+    accounts: http://service-accounts # http://accounts-service:8082
+    blocker: http://service-blocker # http://blocker-service:8087
+    notifications: http://service-notifications # http://notifications-service:8088
 logging:
   level:
     ru.mityunin: INFO
