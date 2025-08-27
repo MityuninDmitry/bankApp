@@ -3,9 +3,23 @@ services:
     image: hashicorp/consul:latest
     ports:
       - "8500:8500"
-    command: agent -dev -client=0.0.0.0 -log-level=ERROR
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0 -data-dir=/consul/data
     environment:
       CONSUL_BIND_INTERFACE: eth0
+      CONSUL_LOCAL_CONFIG: '{
+          "datacenter": "dc1",
+          "node_name": "consul-server",
+          "server": true,
+          "bootstrap_expect": 1,
+          "log_level": "ERROR"
+        }'
+    volumes:
+      - consul_data:/consul/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8500/v1/status/leader" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
   frontui-service:
     build:
       context: .
@@ -14,6 +28,16 @@ services:
       - "8081:8081"
     environment:
       SERVER_PORT: 8081
+    depends_on:
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   accounts-service:
     build:
       context: .
@@ -26,8 +50,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: accounts_password
       SERVER_PORT: 8082
     depends_on:
-      - accounts-db
-      - consul
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8082/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   cash-service:
     build:
       context: .
@@ -37,7 +68,13 @@ services:
     environment:
       SERVER_PORT: 8083
     depends_on:
-      - consul
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   transfer-service:
     build:
       context: .
@@ -47,7 +84,13 @@ services:
     environment:
       SERVER_PORT: 8084
     depends_on:
-      - consul
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8084/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   exchange-service:
     build:
       context: .
@@ -57,7 +100,13 @@ services:
     environment:
       SERVER_PORT: 8085
     depends_on:
-      - consul
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   exchange-generator-service:
     build:
       context: .
@@ -70,8 +119,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: accounts_password
       SERVER_PORT: 8086
     depends_on:
-      - accounts-db
-      - consul
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8086/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   blocker-service:
     build:
       context: .
@@ -81,7 +137,13 @@ services:
     environment:
       SERVER_PORT: 8087
     depends_on:
-      - consul
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   notifications-service:
     build:
       context: .
@@ -94,8 +156,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: accounts_password
       SERVER_PORT: 8088
     depends_on:
-      - accounts-db
-      - consul
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8088/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   accounts-db:
     image: postgres:latest
@@ -116,3 +185,4 @@ services:
 
 volumes:
   pg_data:
+  consul_data:

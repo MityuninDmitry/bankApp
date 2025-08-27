@@ -2,7 +2,7 @@ server:
   port: ${SERVER_PORT:8081}
 spring:
   application:
-    name: FrontUI
+    name: service-frontui
   config:
     import: "consul:"  # Add a spring.config.import=consul: property to your configuration.
   cloud:
@@ -13,6 +13,8 @@ spring:
         service-name: service-frontui  # Необязательно, по умолчанию берётся spring.application.name
       config:
         enabled: true            # Включаем Consul Config для внешней конфигурации
+        data-key: data
+        format: PROPERTIES
         prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
         defaultContext: application  # Контекст по умолчанию
   thymeleaf:
@@ -36,12 +38,12 @@ spring:
       - /webjars/**
 service:
   url:
-    accounts: http://service-accounts # http://accounts-service:8082
-    cash: http://service-cash # http://cash-service:8083
+    accounts: TEST #http://service-accounts # http://accounts-service:8082
+    cash: TEST #http://service-cash # http://cash-service:8083
     # exchangegenerator: http://service-exchange-generator # http://exchange-generator-service:8086
-    exchange: http://service-exchange # http://exchange-service:8085
-    transfer: http://service-transfer # http://transfer-service:8084
-    notifications: http://service-notifications # http://notifications-service:8088
+    exchange: TEST #http://service-exchange # http://exchange-service:8085
+    transfer: TEST #http://service-transfer # http://transfer-service:8084
+    notifications: TEST #http://service-notifications # http://notifications-service:8088
 logging:
   level:
     root: INFO

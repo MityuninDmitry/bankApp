@@ -2,7 +2,7 @@ server:
   port: ${SERVER_PORT:8083}
 spring:
   application:
-    name: Cash
+    name: service-cash
   config:
     import: "consul:" # Add a spring.config.import=consul: property to your configuration.
   cloud:
@@ -13,13 +13,15 @@ spring:
         service-name: service-cash  # Необязательно, по умолчанию берётся spring.application.name
       config:
         enabled: true            # Включаем Consul Config для внешней конфигурации
+        data-key: data
+        format: PROPERTIES
         prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    accounts: http://service-accounts # http://accounts-service:8082
-    blocker: http://service-blocker # http://blocker-service:8087
-    notifications: http://service-notifications # http://notifications-service:8088
+    accounts: TEST # http://service-accounts # http://accounts-service:8082
+    blocker: TEST # http://service-blocker # http://blocker-service:8087
+    notifications: TEST # http://service-notifications # http://notifications-service:8088
 logging:
   level:
     ru.mityunin: INFO

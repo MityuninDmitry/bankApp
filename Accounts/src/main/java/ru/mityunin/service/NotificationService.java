@@ -9,11 +9,11 @@ import ru.mityunin.dto.AddNotificationRequestDto;
 @Service
 public class NotificationService {
 
-    private final String serviceUrl;
+    @Value("${service.url.notifications}")
+    private String serviceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public NotificationService(@Value("${service.url.notifications}") String serviceUrl, RestTemplateHelper restTemplateHelper) {
-        this.serviceUrl = serviceUrl;
+    public NotificationService(RestTemplateHelper restTemplateHelper) {
         this.restTemplateHelper = restTemplateHelper;
     }
 

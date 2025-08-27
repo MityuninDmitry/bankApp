@@ -8,7 +8,7 @@ server:
     uri-encoding: UTF-8
 spring:
   application:
-    name: Exchange
+    name: service-exchange
   config:
     import: "consul:"  # Add a spring.config.import=consul: property to your configuration.
   cloud:
@@ -19,8 +19,10 @@ spring:
         service-name: service-exchange  # Необязательно, по умолчанию берётся spring.application.name
       config:
         enabled: true            # Включаем Consul Config для внешней конфигурации
+        data-key: data
+        format: PROPERTIES
         prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    exchangegenerator: http://service-exchange-generator # http://exchange-generator-service:8086
+    exchangegenerator: TEST # http://service-exchange-generator # http://exchange-generator-service:8086
