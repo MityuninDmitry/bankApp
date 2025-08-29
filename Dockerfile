@@ -1,4 +1,4 @@
-# Стадия сборки с кешированием зависимостей
+# syntax=docker/dockerfile:1.4
 FROM maven:3.9.6-eclipse-temurin-21 as builder
 WORKDIR /app
 
@@ -21,19 +21,64 @@ RUN mvn dependency:go-offline -B
 # Копируем весь исходный код
 COPY . .
 
-# Аргумент для выбора сервиса для сборки
-ARG SERVICE_NAME
+# Создаем отдельные стадии для каждого сервиса
+FROM builder as accounts-builder
+RUN mvn clean package -pl Accounts -am -DskipTests
 
-# Собираем конкретный сервис
-RUN mvn clean package -pl ${SERVICE_NAME} -am -DskipTests
+FROM builder as cash-builder
+RUN mvn clean package -pl Cash -am -DskipTests
 
-# Финальный образ
-FROM openjdk:21-jdk-slim
+FROM builder as transfer-builder
+RUN mvn clean package -pl Transfer -am -DskipTests
+
+FROM builder as exchange-builder
+RUN mvn clean package -pl Exchange -am -DskipTests
+
+FROM builder as exchange-generator-builder
+RUN mvn clean package -pl ExchangeGenerator -am -DskipTests
+
+FROM builder as blocker-builder
+RUN mvn clean package -pl Blocker -am -DskipTests
+
+FROM builder as notifications-builder
+RUN mvn clean package -pl Notifications -am -DskipTests
+
+FROM builder as gateway-builder
+RUN mvn clean package -pl Gateway -am -DskipTests
+
+FROM builder as frontui-builder
+RUN mvn clean package -pl FrontUI -am -DskipTests
+
+# Базовый финальный образ
+FROM openjdk:21-jdk-slim as base
 WORKDIR /app
-
-# Аргумент для пути к jar файлу
-ARG JAR_PATH
-
-COPY --from=builder /app/${JAR_PATH} app.jar
 EXPOSE ${SERVER_PORT:-8080}
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Финальные образы для каждого сервиса
+FROM base as accounts-service
+COPY --from=accounts-builder /app/Accounts/target/Accounts-*.jar app.jar
+
+FROM base as cash-service
+COPY --from=cash-builder /app/Cash/target/Cash-*.jar app.jar
+
+FROM base as transfer-service
+COPY --from=transfer-builder /app/Transfer/target/Transfer-*.jar app.jar
+
+FROM base as exchange-service
+COPY --from=exchange-builder /app/Exchange/target/Exchange-*.jar app.jar
+
+FROM base as exchange-generator-service
+COPY --from=exchange-generator-builder /app/ExchangeGenerator/target/ExchangeGenerator-*.jar app.jar
+
+FROM base as blocker-service
+COPY --from=blocker-builder /app/Blocker/target/Blocker-*.jar app.jar
+
+FROM base as notifications-service
+COPY --from=notifications-builder /app/Notifications/target/Notifications-*.jar app.jar
+
+FROM base as gateway-service
+COPY --from=gateway-builder /app/Gateway/target/Gateway-*.jar app.jar
+
+FROM base as frontui-service
+COPY --from=frontui-builder /app/FrontUI/target/FrontUI-*.jar app.jar

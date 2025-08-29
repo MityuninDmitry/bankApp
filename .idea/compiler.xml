@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Gateway" />
       </profile>
       <profile name="Annotation profile for Common" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -29,7 +30,6 @@
         <module name="Exchange" />
         <module name="ExchangeGenerator" />
         <module name="FrontUI" />
-        <module name="Gateway" />
         <module name="Transfer" />
         <module name="Blocker" />
         <module name="Cash" />
