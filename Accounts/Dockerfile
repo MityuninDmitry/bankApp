@@ -3,9 +3,6 @@ FROM maven:3.9.6-eclipse-temurin-21 as builder
 WORKDIR /app
 
 # Копируем сначала родительский POM, затем модуль
-# COPY pom.xml .
-# COPY Accounts/pom.xml Accounts/
-# COPY Accounts/src Accounts/src
 COPY . .
 
 # Собираем с указанием относительного пути к родительскому POM

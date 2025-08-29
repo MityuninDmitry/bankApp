@@ -20,10 +20,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+
   frontui-service:
     build:
       context: .
-      dockerfile: FrontUI/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=FrontUI
+        - JAR_PATH=FrontUI/target/FrontUI-*.jar
     ports:
       - "8081:8081"
     environment:
@@ -38,10 +42,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   accounts-service:
     build:
       context: .
-      dockerfile: Accounts/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Accounts
+        - JAR_PATH=Accounts/target/Accounts-*.jar
     ports:
       - "8082:8082"
     environment:
@@ -59,10 +67,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   cash-service:
     build:
       context: .
-      dockerfile: Cash/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Cash
+        - JAR_PATH=Cash/target/Cash-*.jar
     ports:
       - "8083:8083"
     environment:
@@ -75,10 +87,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   transfer-service:
     build:
       context: .
-      dockerfile: Transfer/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Transfer
+        - JAR_PATH=Transfer/target/Transfer-*.jar
     ports:
       - "8084:8084"
     environment:
@@ -91,10 +107,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   exchange-service:
     build:
       context: .
-      dockerfile: Exchange/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Exchange
+        - JAR_PATH=Exchange/target/Exchange-*.jar
     ports:
       - "8085:8085"
     environment:
@@ -107,10 +127,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   exchange-generator-service:
     build:
       context: .
-      dockerfile: ExchangeGenerator/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=ExchangeGenerator
+        - JAR_PATH=ExchangeGenerator/target/ExchangeGenerator-*.jar
     ports:
       - "8086:8086"
     environment:
@@ -128,10 +152,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   blocker-service:
     build:
       context: .
-      dockerfile: Blocker/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Blocker
+        - JAR_PATH=Blocker/target/Blocker-*.jar
     ports:
       - "8087:8087"
     environment:
@@ -144,10 +172,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   notifications-service:
     build:
       context: .
-      dockerfile: Notifications/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Notifications
+        - JAR_PATH=Notifications/target/Notifications-*.jar
     ports:
       - "8088:8088"
     environment:
@@ -165,10 +197,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
   gateway-service:
     build:
       context: .
-      dockerfile: Gateway/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=Gateway
+        - JAR_PATH=Gateway/target/Gateway-*.jar
     ports:
       - "8089:8089"
     environment:
