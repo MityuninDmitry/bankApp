@@ -51,7 +51,7 @@ management:
       enabled: true
 service:
   url:
-    notifications: TEST # http://service-notifications # http://notifications-service:8088
+    gateway: TEST # http://service-gateway # http://service-notifications # http://notifications-service:8088
 
 logging:
   level:

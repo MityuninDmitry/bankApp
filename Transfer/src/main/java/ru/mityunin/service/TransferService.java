@@ -25,8 +25,8 @@ public class TransferService {
     private final RestTemplateHelper restTemplateHelper;
 
     public TransferService(
-            @Value("${service.url.accounts}") String accountsServiceUrl,
-            @Value("${service.url.exchange}") String exchangeServiceUrl,
+            @Value("${service.url.gateway}") String accountsServiceUrl,
+            @Value("${service.url.gateway}") String exchangeServiceUrl,
             RestTemplateHelper restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.exchangeServiceUrl = exchangeServiceUrl;
@@ -37,9 +37,9 @@ public class TransferService {
     public ApiResponse<Void> transferOperation(TransferRequestDto transferRequestDto) {
         log.info("[TransferService] transferOperation {}", transferRequestDto);
         // ссылки на эндпоинты
-        String accountsUrl = accountsServiceUrl + "/api/processOperation";
-        String accountInfoUrl = accountsServiceUrl + "/api/accountInfo";
-        String exchangeUrl = exchangeServiceUrl + "/api/currencies";
+        String accountsUrl = accountsServiceUrl + "/accounts/api/processOperation";
+        String accountInfoUrl = accountsServiceUrl + "/accounts/api/accountInfo";
+        String exchangeUrl = exchangeServiceUrl + "/exchange/api/currencies";
 
         // выясняем тип валюты счетов откуда и куда перевод
         ApiResponse<PaymentAccountDto> accountInfoFrom = restTemplateHelper.postForApiResponse(accountInfoUrl, transferRequestDto.getAccountNumberFrom(), PaymentAccountDto.class);

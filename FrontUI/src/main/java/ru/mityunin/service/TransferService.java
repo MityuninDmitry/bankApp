@@ -14,14 +14,14 @@ public class TransferService {
     private final String transferServiceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public TransferService(@Value("${service.url.transfer}") String transferServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public TransferService(@Value("${service.url.gateway}") String transferServiceUrl, RestTemplateHelper restTemplateHelper) {
         this.transferServiceUrl = transferServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }
 
     public ApiResponse<Void> transferRequest(TransferRequestDto transferRequestDto) {
         log.info("Cash operation request {}", transferRequestDto);
-        String url = transferServiceUrl + "/api/transferRequest";
+        String url = transferServiceUrl + "/transfer/api/transferRequest";
         return restTemplateHelper.postForApiResponse(url, transferRequestDto, Void.class);
     }
 }

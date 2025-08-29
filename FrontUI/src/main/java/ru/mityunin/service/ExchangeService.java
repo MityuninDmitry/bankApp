@@ -19,13 +19,13 @@ public class ExchangeService {
     private final String serviceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public ExchangeService(@Value("${service.url.exchange}") String serviceUrl, RestTemplateHelper restTemplateHelper) {
+    public ExchangeService(@Value("${service.url.gateway}") String serviceUrl, RestTemplateHelper restTemplateHelper) {
         this.serviceUrl = serviceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }
 
     public ApiResponse<List<ExchangeCurrencyFrontUIDto>> currencies() {
-        String url = serviceUrl + "/api/currenciesFrontUI";
+        String url = serviceUrl + "/exchange/api/currenciesFrontUI";
         ApiResponse<ExchangeCurrencyFrontUIDto[]> response = restTemplateHelper.getForApiResponse(url, ExchangeCurrencyFrontUIDto[].class);
         return new ApiResponse<>(
                 response.isSuccess(),

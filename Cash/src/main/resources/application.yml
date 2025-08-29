@@ -19,9 +19,9 @@ spring:
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    accounts: TEST # http://service-accounts # http://accounts-service:8082
-    blocker: TEST # http://service-blocker # http://blocker-service:8087
-    notifications: TEST # http://service-notifications # http://notifications-service:8088
+    gateway: TEST # http://service-accounts # http://accounts-service:8082
+    # blocker: TEST # http://service-blocker # http://blocker-service:8087
+    # notifications: TEST # http://service-notifications # http://notifications-service:8088
 logging:
   level:
     ru.mityunin: INFO

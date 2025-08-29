@@ -9,7 +9,7 @@ import ru.mityunin.dto.AddNotificationRequestDto;
 @Service
 public class NotificationService {
 
-    @Value("${service.url.notifications}")
+    @Value("${service.url.gateway}")
     private String serviceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
@@ -21,7 +21,7 @@ public class NotificationService {
         AddNotificationRequestDto requestDto = new AddNotificationRequestDto();
         requestDto.setLogin(login);
         requestDto.setMessage(message);
-        String requestUrl = serviceUrl + "/api/addNotification";
+        String requestUrl = serviceUrl + "/notifications/api/addNotification";
         return restTemplateHelper.postForApiResponse(requestUrl, requestDto, Void.class);
     }
 }

@@ -17,8 +17,8 @@ public class CashService {
     private final RestTemplateHelper restTemplateHelper;
 
     public CashService(
-            @Value("${service.url.accounts}") String accountsServiceUrl,
-            @Value("${service.url.blocker}") String blockerServiceUrl,
+            @Value("${service.url.gateway}") String accountsServiceUrl,
+            @Value("${service.url.gateway}") String blockerServiceUrl,
             RestTemplateHelper restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.blockerServiceUrl = blockerServiceUrl;
@@ -27,8 +27,8 @@ public class CashService {
 
     public ApiResponse<Void> processOperation(CashOperationRequestDto cashOperationRequestDto) {
         log.info("cash operation {}", cashOperationRequestDto);
-        String accountsUrl = accountsServiceUrl + "/api/processOperation";
-        String blockerUrl = blockerServiceUrl + "/api/checkOperation";
+        String accountsUrl = accountsServiceUrl + "/accounts/api/processOperation";
+        String blockerUrl = blockerServiceUrl + "/blocker/api/checkOperation";
         ApiResponse<Void> suspiciousOperationResponse = restTemplateHelper.postForApiResponse(blockerUrl, cashOperationRequestDto, Void.class);
         if (suspiciousOperationResponse.isSuccess()) {
             return restTemplateHelper.postForApiResponse(accountsUrl, cashOperationRequestDto, Void.class);

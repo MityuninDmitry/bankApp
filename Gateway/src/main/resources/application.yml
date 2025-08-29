@@ -1,0 +1,85 @@
+server:
+  port: ${SERVER_PORT:8089}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: service-gateway
+  config:
+    import: "consul:"
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+      discovery:
+        service-name: service-gateway
+      config:
+        enabled: true
+        data-key: data
+        format: PROPERTIES
+        prefix: config
+        defaultContext: application
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: notifications-service
+              uri: lb://service-notifications
+              predicates:
+                - Path=/notifications/api/**
+              filters:
+                - StripPrefix=1
+            - id: accounts-service
+              uri: lb://service-accounts
+              predicates:
+                - Path=/accounts/api/**
+              filters:
+                - StripPrefix=1
+            - id: blocker-service
+              uri: lb://service-blocker
+              predicates:
+                - Path=/blocker/api/**
+              filters:
+                - StripPrefix=1
+            - id: exchange-service
+              uri: lb://service-exchange
+              predicates:
+                - Path=/exchange/api/**
+              filters:
+                - StripPrefix=1
+            - id: exchange-generator-service
+              uri: lb://service-exchange-generator
+              predicates:
+                - Path=/exchangegenerator/api/**
+              filters:
+                - StripPrefix=1
+            - id: frontui-service
+              uri: lb://service-frontui
+              predicates:
+                - Path=/frontui/**
+              filters:
+                - StripPrefix=1
+            - id: cash-service
+              uri: lb://service-cash
+              predicates:
+                - Path=/cash/api/**
+              filters:
+                - StripPrefix=1
+            - id: transfer-service
+              uri: lb://service-transfer
+              predicates:
+                - Path=/transfer/api/**
+              filters:
+                - StripPrefix=1
+
+logging:
+  level:
+    root: DEBUG
+    org:
+      springframework: DEBUG
+      boot: DEBUG

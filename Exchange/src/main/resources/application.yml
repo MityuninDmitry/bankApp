@@ -25,4 +25,4 @@ spring:
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    exchangegenerator: TEST # http://service-exchange-generator # http://exchange-generator-service:8086
+    gateway: TEST # http://service-exchange-generator # http://exchange-generator-service:8086

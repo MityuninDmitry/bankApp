@@ -19,7 +19,7 @@ spring:
         defaultContext: application  # Контекст по умолчанию
 service:
   url:
-    accounts: TEST #http://service-accounts # http://accounts-service:8082
-    exchange: TEST #http://service-exchange # http://exchange-service:8085
-    notifications: TEST #http://service-notifications # http://notifications-service:8088
-    blocker: TEST #http://service-blocker # http://blocker-service:8087
+    gateway: TEST #http://service-accounts # http://accounts-service:8082
+    # exchange: TEST #http://service-exchange # http://exchange-service:8085
+    # notifications: TEST #http://service-notifications # http://notifications-service:8088
+    # blocker: TEST #http://service-blocker # http://blocker-service:8087

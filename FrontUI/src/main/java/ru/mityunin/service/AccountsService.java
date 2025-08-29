@@ -18,7 +18,7 @@ public class AccountsService {
     private final String accountsServiceUrl;
     private final RestTemplateHelper restTemplateHelper;
 
-    public AccountsService(@Value("${service.url.accounts}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public AccountsService(@Value("${service.url.gateway}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }
@@ -26,7 +26,7 @@ public class AccountsService {
     // Метод для проверки логина/пароля
     public UserDto authenticate(String login, String password) {
         log.info("Authenticating user: {}", login);
-        String url = accountsServiceUrl + "/api/auth";
+        String url = accountsServiceUrl + "/accounts/api/auth";
 
         AuthRequest authRequest = new AuthRequest();
         authRequest.setLogin(login);
@@ -38,7 +38,7 @@ public class AccountsService {
     // Метод для получения данных пользователя без проверки пароля
     public UserDto getUserByLogin(String login) {
         log.info("Getting user by login: {}", login);
-        String url = accountsServiceUrl + "/api/" + login;
+        String url = accountsServiceUrl + "/accounts/api/" + login;
         UserDto userDto = restTemplateHelper.getForApiResponse(url,UserDto.class).getData();
         userDto.getPaymentAccounts().sort(Comparator.comparing(PaymentAccountDto::getAccountNumber));
         return userDto;
@@ -46,7 +46,7 @@ public class AccountsService {
 
     public ApiResponse<List<UserDto>> getAllUsersExcept(String login) {
         log.info("[Front UI] AccountsService getAllUsersExcept: {}", login);
-        String url = accountsServiceUrl + "/api/findAllExcept/" + login;
+        String url = accountsServiceUrl + "/accounts/api/findAllExcept/" + login;
         ApiResponse<UserDto[]> response = restTemplateHelper.getForApiResponse(url, UserDto[].class);
         log.info("[Front UI] AccountsService getAllUsersExcept response: {}", response);
         return new ApiResponse<>(
@@ -56,7 +56,7 @@ public class AccountsService {
         );
     }
     public ApiResponse<List<PaymentAccountDto>> paymentAccountsByLogin(String login) {
-        String url = accountsServiceUrl + "/api/paymentAccounts/" + login;
+        String url = accountsServiceUrl + "/accounts/api/paymentAccounts/" + login;
         ApiResponse<PaymentAccountDto[]> response = restTemplateHelper.getForApiResponse(url, PaymentAccountDto[].class);
         return new ApiResponse<>(
                 response.isSuccess(),
@@ -76,13 +76,13 @@ public class AccountsService {
 
         log.info("Attempting to delete accountNumber: {}", accountNumber);
 
-        String url = accountsServiceUrl + "/api/delete/paymentAccount";
+        String url = accountsServiceUrl + "/accounts/api/delete/paymentAccount";
         return restTemplateHelper.postForApiResponse(url,requestDto, Void.class).isSuccess();
     }
 
     public boolean addPaymentAccount(String accountNumber) {
         log.info("Attempting to delete accountNumber: {}", accountNumber);
-        String url = accountsServiceUrl + "/api/add/paymentAccount";
+        String url = accountsServiceUrl + "/accounts/api/add/paymentAccount";
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
@@ -96,27 +96,27 @@ public class AccountsService {
 
     public UserDto registerUser(UserRegistrationRequest registrationRequest) {
         log.info("Registering new user: {}", registrationRequest.getLogin());
-        String url = accountsServiceUrl + "/api/register";
+        String url = accountsServiceUrl + "/accounts/api/register";
         return restTemplateHelper.postForApiResponse(url,registrationRequest,UserDto.class).getData();
     }
 
     public ApiResponse<Void> deleteUser(String login) {
         log.info("Deleting user: {}", login);
-        String url = accountsServiceUrl + "/api/delete";
+        String url = accountsServiceUrl + "/accounts/api/delete";
 
         return restTemplateHelper.postForApiResponse(url, login, Void.class);
     }
 
     public boolean updatePassword(AuthRequest authRequest) {
         log.info("Updating password for user: {}", authRequest.getLogin());
-        String url = accountsServiceUrl + "/api/update/password";
+        String url = accountsServiceUrl + "/accounts/api/update/password";
         return restTemplateHelper.postForApiResponse(url, authRequest, Void.class).isSuccess();
 
     }
 
     public boolean updateUserInfo(UserDto userDto) {
         log.info("Updating user info for user: {}", userDto.getLogin());
-        String url = accountsServiceUrl + "/api/update/userInfo";
+        String url = accountsServiceUrl + "/accounts/api/update/userInfo";
         return restTemplateHelper.postForApiResponse(url,userDto, Void.class).isSuccess();
 
     }
