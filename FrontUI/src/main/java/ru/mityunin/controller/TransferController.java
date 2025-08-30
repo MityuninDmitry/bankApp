@@ -12,7 +12,7 @@ import ru.mityunin.dto.TransferRequestDto;
 import ru.mityunin.service.TransferService;
 
 @Controller
-@RequestMapping("/transfer")
+@RequestMapping("/frontui/transfer")
 public class TransferController {
     private static final Logger log = LoggerFactory.getLogger(TransferController.class);
     private final TransferService transferService;
@@ -32,7 +32,7 @@ public class TransferController {
             log.info("[FrontUI] TransferController: api message {}", apiResponse.getMessage());
             redirectAttributes.addFlashAttribute("transferError", apiResponse.getMessage());
         }
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 
     @PostMapping("/transferToUser")
@@ -46,6 +46,6 @@ public class TransferController {
             log.info("[FrontUI] TransferController: transfer to user api message {}", apiResponse.getMessage());
             redirectAttributes.addFlashAttribute("transferToUserError", apiResponse.getMessage());
         }
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 }

@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-@RequestMapping("/home")
+@RequestMapping("/frontui/home")
 public class HomeController {
     private final AccountsService accountsService;
     private final ExchangeService exchangeService;

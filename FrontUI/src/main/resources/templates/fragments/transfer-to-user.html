@@ -67,7 +67,7 @@
     <div id="transferToUserError" class="transfer-to-user-error" th:if="${transferToUserError}" th:text="${transferToUserError}"></div>
 
     <!-- Основная форма для перевода денег -->
-    <form th:action="@{/transfer/transferToUser}" method="post" class="transfer-to-user-form" id="transferToUserForm">
+    <form th:action="@{/frontui/transfer/transferToUser}" method="post" class="transfer-to-user-form" id="transferToUserForm">
       <!-- Счет отправителя (текущий пользователь) -->
       <div class="transfer-to-user-account-select">
         <label for="transferToUserAccountFrom">From Account:</label>
@@ -175,7 +175,7 @@
       const userSelect = document.getElementById('transferToUserLogin');
       if (userSelect) userSelect.classList.add('transfer-to-user-loading');
 
-      fetch('/accounts/paymentAccountsByLogin?login=' + encodeURIComponent(login))
+      fetch('/frontui/accounts/paymentAccountsByLogin?login=' + encodeURIComponent(login))
         .then(response => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();

@@ -17,7 +17,7 @@ import ru.mityunin.service.NotificationsService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/frontui/notifications")
 public class NotificationController {
     private static final Logger log = LoggerFactory.getLogger(NotificationController.class);
     private final NotificationsService notificationsService;

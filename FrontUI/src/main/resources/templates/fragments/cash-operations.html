@@ -56,7 +56,7 @@
         <td style="text-align: right;"
             th:text="${#numbers.formatDecimal(account.balance, 1, 2)}"></td>
         <td>
-          <form th:action="@{/cash/action}" method="post">
+          <form th:action="@{/frontui/cash/action}" method="post">
             <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
             <input type="hidden" name="login" th:value="${userDto.login}">
             <input type="number" name="money" step="0.01" min="0.01"

@@ -18,6 +18,7 @@ public class SecurityConfig {
     public SecurityConfig(CustomAuthenticationProvider authProvider) {
         this.authProvider = authProvider;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -25,32 +26,36 @@ public class SecurityConfig {
                 .authenticationProvider(authProvider)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/login",
-                                "/accounts/register",
-                                "/static/**",
-                                "/js/**",
-                                "/css/**",
-                                "/webjars/**"
+                                "/frontui/",                       // ← Добавлено /frontui
+                                "/frontui/login",                  // ← Добавлено /frontui
+                                "/frontui/accounts/register",      // ← Добавлено /frontui
+                                "/frontui/static/**",              // ← Добавлено /frontui
+                                "/frontui/js/**",                  // ← Добавлено /frontui
+                                "/frontui/css/**",                 // ← Добавлено /frontui
+                                "/frontui/webjars/**"              // ← Добавлено /frontui
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/accounts/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/delete").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/frontui/accounts/register").permitAll()  // ← Добавлено /frontui
+                        .requestMatchers(HttpMethod.POST, "/frontui/delete").authenticated()         // ← Добавлено /frontui
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/perform_login")
-                        .defaultSuccessUrl("/home", true)
-                        .failureUrl("/login?error=true")
+                        .loginPage("/frontui/login")               // ← Добавлено /frontui
+                        .loginProcessingUrl("/frontui/perform_login")  // ← Добавлено /frontui
+                        .defaultSuccessUrl("/frontui/home", true)  // ← Добавлено /frontui
+                        .failureUrl("/frontui/login?error=true")   // ← Добавлено /frontui
                         .permitAll()
                 )
-
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutUrl("/frontui/logout")              // ← Добавлено /frontui
+                        .logoutSuccessUrl("/frontui/login?logout") // ← Добавлено /frontui
                         .permitAll()
                 );
 
         return http.build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

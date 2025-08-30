@@ -30,7 +30,7 @@ import java.time.Period;
 import java.util.List;
 
 @Controller
-@RequestMapping("/accounts")
+@RequestMapping("/frontui/accounts")
 public class AccountsController {
     private final AccountsService accountsService;
     private final UserDetailsService userDetailsService;
@@ -58,12 +58,12 @@ public class AccountsController {
             } else {
 
                 redirectAttributes.addFlashAttribute("deleteUserError", deleteResponse.getMessage());
-                return "redirect:/home";
+                return "redirect:/frontui/home";
             }
 
         }
 
-        return "redirect:/login?delete";
+        return "redirect:/frontui/login?delete";
     }
 
     @GetMapping("/register")
@@ -110,7 +110,7 @@ public class AccountsController {
         HttpSession session = request.getSession(true);
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 
     @PostMapping("/update/password")
@@ -121,7 +121,7 @@ public class AccountsController {
         } else {
             model.addAttribute("passwordError", "Failed to update password");
         }
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 
     @PostMapping("/update/userInfo")
@@ -132,14 +132,14 @@ public class AccountsController {
         } else {
             model.addAttribute("userInfoUpdatedError", "Failed to update user info");
         }
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 
     @PostMapping("/update/userInfo/deleteAccount")
     public String deleteAccount(@RequestParam String accountNumber) {
         accountsService.deletePaymentAccount(accountNumber);
 
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 
     @PostMapping("/update/userInfo/addAccount")
@@ -147,7 +147,7 @@ public class AccountsController {
 
         accountsService.addPaymentAccount(accountNumber);
 
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 
     @GetMapping("/paymentAccountsByLogin")

@@ -11,6 +11,7 @@ spring:
       port: 8500               # Порт Consul (8500 по умолчанию)
       discovery:
         service-name: service-frontui  # Необязательно, по умолчанию берётся spring.application.name
+        health-check-path: /actuator/health
       config:
         enabled: true            # Включаем Consul Config для внешней конфигурации
         data-key: data

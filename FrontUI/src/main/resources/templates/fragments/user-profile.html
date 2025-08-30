@@ -44,7 +44,7 @@
   <div th:if="${deleteUserError}" class="error-message">
     <span th:text="${deleteUserError}"></span>
   </div>
-  <form th:action="@{/accounts/delete}" method="post" style="display: inline;">
+  <form th:action="@{/frontui/accounts/delete}" method="post" style="display: inline;">
     <button type="submit" style="margin-left: 10px; color: white; background-color: #f44336; border: none; padding: 2px 5px; border-radius: 3px; cursor: pointer;">
       Delete Account
     </button>
@@ -54,7 +54,7 @@
   <!-- Форма для изменения информации пользователя -->
   <div style="margin-top: 20px;">
     <h4>Edit Profile Information</h4>
-    <form th:action="@{/accounts/update/userInfo}" method="post">
+    <form th:action="@{/frontui/accounts/update/userInfo}" method="post">
       <input type="hidden" name="login" th:value="${userDto.login}">
 
       <div style="margin-bottom: 10px;">
@@ -127,7 +127,7 @@
 
           <td style="text-align: center;">
             <!-- Отдельная форма для удаления счета (не вложенная) -->
-            <form th:action="@{/accounts/update/userInfo/deleteAccount}" method="post" style="display: inline;">
+            <form th:action="@{/frontui/accounts/update/userInfo/deleteAccount}" method="post" style="display: inline;">
               <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
               <button type="submit"
                       class="delete-account-btn"
@@ -165,7 +165,7 @@
           <span th:text="${account.currency}"></span>
         </td>
         <td style="text-align: center;">
-          <form th:action="@{/accounts/update/userInfo/addAccount}" method="post" style="display: inline;">
+          <form th:action="@{/frontui/accounts/update/userInfo/addAccount}" method="post" style="display: inline;">
             <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
             <button type="submit"
                     style="padding: 5px 10px; background-color: #4CAF50; border: none;
@@ -182,7 +182,7 @@
   <!-- Форма для изменения пароля -->
   <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
     <h4>Change Password</h4>
-    <form th:action="@{/accounts/update/password}" method="post">
+    <form th:action="@{/frontui/accounts/update/password}" method="post">
       <input type="hidden" name="login" th:value="${userDto.login}">
       <div style="margin-bottom: 10px;">
         <label for="password">New Password:</label>
@@ -198,7 +198,7 @@
 </div>
 
 <div th:fragment="notAuthenticated" th:if="${userDto == null}">
-  <p>Please <a href="/login">log in</a> to view your profile.</p>
+  <p>Please <a href="/frontui/login">log in</a> to view your profile.</p>
 </div>
 </body>
 </html>

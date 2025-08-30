@@ -15,7 +15,7 @@ import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.service.CashService;
 
 @Controller
-@RequestMapping("/cash")
+@RequestMapping("/frontui/cash")
 public class CashController {
     private static final Logger log = LoggerFactory.getLogger(CashController.class);
     private final CashService cashService;
@@ -34,6 +34,6 @@ public class CashController {
             log.info("CashController: api message {}", apiResponse.getMessage());
             redirectAttributes.addFlashAttribute("actionWithPaymentAccountError", apiResponse.getMessage());
         }
-        return "redirect:/home";
+        return "redirect:/frontui/home";
     }
 }

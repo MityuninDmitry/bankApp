@@ -33,6 +33,15 @@
             <artifactId>spring-cloud-starter-gateway-server-webmvc</artifactId>
             <version>4.3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-h2</artifactId> <!-- Or your specific database driver -->
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -27,16 +27,16 @@ public class DataInitializer implements CommandLineRunner {
         User user = new User();
         user.setLogin("testUser");
         user.setPassword("password123");
-        user.setFirstName("Dmitry");
-        user.setLastName("Mityunin");
-        user.setEmail("dmityunin@example.com");
+        user.setFirstName("SomeName");
+        user.setLastName("SomeLastName");
+        user.setEmail("LastName@example.com");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
 
         // Создаем счета
         List<PaymentAccount> accounts = List.of(
-                createAccount(CurrencyType.RUB, new BigDecimal("100000.00"), user),
-                createAccount(CurrencyType.CNY, new BigDecimal("1000.00"), user),
-                createAccount(CurrencyType.USD, new BigDecimal("5000.00"), user)
+                createAccount(CurrencyType.RUB, new BigDecimal("2.00"), user),
+                createAccount(CurrencyType.CNY, new BigDecimal("2.00"), user),
+                createAccount(CurrencyType.USD, new BigDecimal("2.00"), user)
         );
 
         user.setPaymentAccounts(accounts);

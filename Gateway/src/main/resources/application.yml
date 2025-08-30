@@ -15,63 +15,64 @@ spring:
         enabled: true
         data-key: data
         format: PROPERTIES
-        prefix: config
-        defaultContext: application
+        prefixes: config
+        default-application-name: application
     gateway:
-      mvc:
-        routes:
-          - id: notifications-service
-            uri: lb://service-notifications
-            predicates:
-              - Path=/notifications/api/**
-            filters:
-              - StripPrefix=1
-          - id: accounts-service
-            uri: lb://service-accounts
-            predicates:
-              - Path=/accounts/api/**
-            filters:
-              - StripPrefix=1
-          - id: blocker-service
-            uri: lb://service-blocker
-            predicates:
-              - Path=/blocker/api/**
-            filters:
-              - StripPrefix=1
-          - id: exchange-service
-            uri: lb://service-exchange
-            predicates:
-              - Path=/exchange/api/**
-            filters:
-              - StripPrefix=1
-          - id: exchange-generator-service
-            uri: lb://service-exchange-generator
-            predicates:
-              - Path=/exchangegenerator/api/**
-            filters:
-              - StripPrefix=1
-          - id: frontui-service
-            uri: lb://service-frontui
-            predicates:
-              - Path=/frontui/**
-            filters:
-              - StripPrefix=1
-          - id: cash-service
-            uri: lb://service-cash
-            predicates:
-              - Path=/cash/api/**
-            filters:
-              - StripPrefix=1
-          - id: transfer-service
-            uri: lb://service-transfer
-            predicates:
-              - Path=/transfer/api/**
-            filters:
-              - StripPrefix=1
+      server:
+        webmvc:
+          routes:
+            - id: notifications-service
+              uri: lb://service-notifications
+              predicates:
+                - Path=/notifications/api/**
+              filters:
+                - StripPrefix=1
+            - id: accounts-service
+              uri: lb://service-accounts
+              predicates:
+                - Path=/accounts/api/**
+              filters:
+                - StripPrefix=1
+            - id: blocker-service
+              uri: lb://service-blocker
+              predicates:
+                - Path=/blocker/api/**
+              filters:
+                - StripPrefix=1
+            - id: exchange-service
+              uri: lb://service-exchange
+              predicates:
+                - Path=/exchange/api/**
+              filters:
+                - StripPrefix=1
+            - id: exchange-generator-service
+              uri: lb://service-exchange-generator
+              predicates:
+                - Path=/exchangegenerator/api/**
+              filters:
+                - StripPrefix=1
+            - id: frontui-service
+              uri: lb://service-frontui
+              predicates:
+                - Path=/frontui/**
+              # filters:
+                # - StripPrefix=1
+            - id: cash-service
+              uri: lb://service-cash
+              predicates:
+                - Path=/cash/api/**
+              filters:
+                - StripPrefix=1
+            - id: transfer-service
+              uri: lb://service-transfer
+              predicates:
+                - Path=/transfer/api/**
+              filters:
+                - StripPrefix=1
 
 logging:
   level:
-    root: DEBUG
+    root: INFO
     org:
-      springframework: DEBUG
-      boot: DEBUG
+      springframework: INFO
+      boot: INFO

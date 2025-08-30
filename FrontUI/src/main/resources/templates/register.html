@@ -10,7 +10,7 @@
 <div class="container">
   <h2>Registration</h2>
 
-  <form th:action="@{/accounts/register}" method="post" th:object="${registrationRequest}">
+  <form th:action="@{/frontui/accounts/register}" method="post" th:object="${registrationRequest}">
     <div class="form-group">
       <label for="login">Login:</label>
       <input type="text" id="login" th:field="*{login}" required>
@@ -52,7 +52,7 @@
     <button type="submit" class="btn">Register</button>
   </form>
 
-  <p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+  <p>Already have an account? <a th:href="@{/frontui/login}">Login here</a></p>
 </div>
 </body>
 </html>
