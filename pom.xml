@@ -23,7 +23,8 @@
 		<module>Notifications</module>
 		<module>Common</module>
 		<module>Gateway</module>
-	</modules>
+        <module>Auth</module>
+    </modules>
 	<name>bankApp</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>

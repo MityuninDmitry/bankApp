@@ -21,6 +21,12 @@ spring:
       server:
         webmvc:
           routes:
+            - id: auth-service
+              uri: lb://service-auth  # Имя сервиса в Consul
+              predicates:
+                - Path=/auth/**       # Префикс для доступа к auth service
+              filters:
+                - StripPrefix=1
             - id: notifications-service
               uri: lb://service-notifications
               predicates:

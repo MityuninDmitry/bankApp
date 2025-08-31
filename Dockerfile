@@ -14,6 +14,7 @@ COPY Blocker/pom.xml Blocker/
 COPY Notifications/pom.xml Notifications/
 COPY Gateway/pom.xml Gateway/
 COPY FrontUI/pom.xml FrontUI/
+COPY Auth/pom.xml Auth/
 
 # Скачиваем зависимости (кешируем этот слой)
 RUN mvn dependency:go-offline -B
@@ -22,6 +23,9 @@ RUN mvn dependency:go-offline -B
 COPY . .
 
 # Создаем отдельные стадии для каждого сервиса
+FROM builder as auth-builder
+RUN mvn clean package -pl Auth -am -DskipTests
+
 FROM builder as accounts-builder
 RUN mvn clean package -pl Accounts -am -DskipTests
 
@@ -56,6 +60,9 @@ EXPOSE ${SERVER_PORT:-8080}
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Финальные образы для каждого сервиса
+FROM base as auth-service
+COPY --from=auth-builder /app/Auth/target/Auth-*.jar app.jar
+
 FROM base as accounts-service
 COPY --from=accounts-builder /app/Accounts/target/Accounts-*.jar app.jar
 
