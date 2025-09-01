@@ -41,8 +41,8 @@ public class AuthorizationServerConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder) {
         RegisteredClient serviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("microservice-client")
-                .clientSecret(passwordEncoder.encode("microservice-secret"))
+                .clientId("service-client")
+                .clientSecret(passwordEncoder.encode("service-secret"))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .scope("server")
