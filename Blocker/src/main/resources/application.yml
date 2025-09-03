@@ -17,6 +17,22 @@ spring:
         format: PROPERTIES
         prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
         defaultContext: application  # Контекст по умолчанию
+  security:
+    oauth2:
+      client:
+        registration:
+          blocker-client:
+            provider: spring
+            client-id: blocker-service
+            client-secret: blocker-secret
+            authorization-grant-type: client_credentials
+            scope: blocker
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
 service:
   url:
     gateway: TEST # http://service-notifications # http://notifications-service:8088
+client:
+  registration:
+    id: "blocker-client"

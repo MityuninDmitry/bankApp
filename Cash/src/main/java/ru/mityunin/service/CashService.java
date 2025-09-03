@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.CashOperationRequestDto;
@@ -14,12 +15,12 @@ public class CashService {
     private static final Logger log = LoggerFactory.getLogger(CashService.class);
     private final String accountsServiceUrl;
     private final String blockerServiceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
     public CashService(
             @Value("${service.url.gateway}") String accountsServiceUrl,
             @Value("${service.url.gateway}") String blockerServiceUrl,
-            RestTemplateHelper restTemplateHelper) {
+            AuthenticatedRestTemplateService restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.blockerServiceUrl = blockerServiceUrl;
         this.restTemplateHelper = restTemplateHelper;

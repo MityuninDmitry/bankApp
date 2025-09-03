@@ -2,8 +2,8 @@ package ru.mityunin.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
-import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.AddNotificationRequestDto;
 
 @Service
@@ -11,9 +11,9 @@ public class NotificationService {
 
     @Value("${service.url.gateway}")
     private String serviceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
-    public NotificationService(RestTemplateHelper restTemplateHelper) {
+    public NotificationService(AuthenticatedRestTemplateService restTemplateHelper) {
         this.restTemplateHelper = restTemplateHelper;
     }
 

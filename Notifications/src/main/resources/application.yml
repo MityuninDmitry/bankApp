@@ -39,3 +39,19 @@ spring:
         hbm2ddl.schema-generation.scripts.action: create
         hbm2ddl.schema-generation.scripts.create-target: init.sql
         hbm2ddl.schema-generation.scripts.create-source: metadata
+  security:
+    oauth2:
+      client:
+        registration:
+          notifications-client:
+            provider: spring
+            client-id: notifications-service
+            client-secret: notifications-secret
+            authorization-grant-type: client_credentials
+            scope: notifications
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
+client:
+  registration:
+    id: "notifications-client"

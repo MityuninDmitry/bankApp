@@ -26,6 +26,8 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Configuration
@@ -40,18 +42,101 @@ public class AuthorizationServerConfig {
 
     @Bean
     public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder) {
-        RegisteredClient serviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("service-client")
-                .clientSecret(passwordEncoder.encode("service-secret"))
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .scope("server")
-                .tokenSettings(TokenSettings.builder()
-                        .accessTokenTimeToLive(Duration.ofHours(1))
-                        .build())
-                .build();
+        List<RegisteredClient> clients = Arrays.asList(
+                // FrontUI client
+                RegisteredClient.withId("frontui-client")
+                        .clientId("frontui-service")
+                        .clientSecret(passwordEncoder.encode("frontui-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("frontui")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
 
-        return new InMemoryRegisteredClientRepository(serviceClient);
+                RegisteredClient.withId("accounts-client")
+                        .clientId("accounts-service")
+                        .clientSecret(passwordEncoder.encode("accounts-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("accounts")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
+
+                RegisteredClient.withId("blocker-client")
+                        .clientId("blocker-service")
+                        .clientSecret(passwordEncoder.encode("blocker-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("blocker")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
+
+                // Cash service client
+                RegisteredClient.withId("cash-client")
+                        .clientId("cash-service")
+                        .clientSecret(passwordEncoder.encode("cash-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("cash")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
+
+                RegisteredClient.withId("exchange-client")
+                        .clientId("exchange-service")
+                        .clientSecret(passwordEncoder.encode("exchange-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("exchange")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
+
+                RegisteredClient.withId("exchange-generator-client")
+                        .clientId("exchange-generator-service")
+                        .clientSecret(passwordEncoder.encode("exchange-generator-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("exchange-generator")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
+
+                RegisteredClient.withId("notifications-client")
+                        .clientId("notifications-service")
+                        .clientSecret(passwordEncoder.encode("notifications-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("notifications")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build(),
+
+                // Transfer service client
+                RegisteredClient.withId("transfer-client")
+                        .clientId("transfer-service")
+                        .clientSecret(passwordEncoder.encode("transfer-secret"))
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                        .scope("transfer")
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofHours(1))
+                                .build())
+                        .build()
+
+        );
+
+        return new InMemoryRegisteredClientRepository(clients);
     }
 
     @Bean

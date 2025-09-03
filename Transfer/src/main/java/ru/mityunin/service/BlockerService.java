@@ -2,15 +2,16 @@ package ru.mityunin.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 
 @Service
 public class BlockerService {
     private final String blockerServiceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
-    public BlockerService(@Value("${service.url.gateway}") String blockerServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public BlockerService(@Value("${service.url.gateway}") String blockerServiceUrl, AuthenticatedRestTemplateService restTemplateHelper) {
         this.blockerServiceUrl = blockerServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }

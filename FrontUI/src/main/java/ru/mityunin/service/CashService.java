@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.CashOperationRequestDto;
@@ -14,11 +15,11 @@ import ru.mityunin.dto.CashOperationRequestDto;
 public class CashService {
     private static final Logger log = LoggerFactory.getLogger(CashService.class);
     private final String serviceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
     public CashService(
             @Value("${service.url.gateway}") String serviceUrl,
-            RestTemplateHelper restTemplateHelper) {
+            AuthenticatedRestTemplateService restTemplateHelper) {
         this.serviceUrl = serviceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }

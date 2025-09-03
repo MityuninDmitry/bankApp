@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.CashOperationRequest;
@@ -22,12 +23,12 @@ public class TransferService {
     private static final Logger log = LoggerFactory.getLogger(TransferService.class);
     private final String accountsServiceUrl;
     private final String exchangeServiceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
     public TransferService(
             @Value("${service.url.gateway}") String accountsServiceUrl,
             @Value("${service.url.gateway}") String exchangeServiceUrl,
-            RestTemplateHelper restTemplateHelper) {
+            AuthenticatedRestTemplateService restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.exchangeServiceUrl = exchangeServiceUrl;
         this.restTemplateHelper = restTemplateHelper;

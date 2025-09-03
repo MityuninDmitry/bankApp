@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.ExchangeCurrencyDto;
@@ -17,9 +18,9 @@ public class ExchangeService {
 
     private static final Logger log = LoggerFactory.getLogger(CashService.class);
     private final String serviceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
-    public ExchangeService(@Value("${service.url.gateway}") String serviceUrl, RestTemplateHelper restTemplateHelper) {
+    public ExchangeService(@Value("${service.url.gateway}") String serviceUrl, AuthenticatedRestTemplateService restTemplateHelper) {
         this.serviceUrl = serviceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }

@@ -17,11 +17,27 @@ spring:
         format: PROPERTIES
         prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
         defaultContext: application  # Контекст по умолчанию
+  security:
+    oauth2:
+      client:
+        registration:
+          cash-client:
+            provider: spring
+            client-id: cash-service
+            client-secret: cash-secret
+            authorization-grant-type: client_credentials
+            scope: cash
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
 service:
   url:
     gateway: TEST # http://service-accounts # http://accounts-service:8082
     # blocker: TEST # http://service-blocker # http://blocker-service:8087
     # notifications: TEST # http://service-notifications # http://notifications-service:8088
+client:
+  registration:
+    id: "cash-client"
 logging:
   level:
     ru.mityunin: INFO

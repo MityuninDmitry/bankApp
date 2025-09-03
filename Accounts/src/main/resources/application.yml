@@ -34,6 +34,19 @@ spring:
         hbm2ddl.schema-generation.scripts.action: create
         hbm2ddl.schema-generation.scripts.create-target: init.sql
         hbm2ddl.schema-generation.scripts.create-source: metadata
+  security:
+    oauth2:
+      client:
+        registration:
+          accounts-client:
+            provider: spring
+            client-id: accounts-service
+            client-secret: accounts-secret
+            authorization-grant-type: client_credentials
+            scope: accounts
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
 management:
   endpoints:
     web:
@@ -49,10 +62,13 @@ management:
       enabled: true
     metrics:
       enabled: true
+
 service:
   url:
     gateway: TEST # http://service-gateway # http://service-notifications # http://notifications-service:8088
-
+client:
+  registration:
+    id: "accounts-client"
 logging:
   level:
     root: INFO

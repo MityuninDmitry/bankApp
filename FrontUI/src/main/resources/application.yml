@@ -30,6 +30,18 @@ spring:
         - classpath:/resources/
         - classpath:/META-INF/resources/
   security:
+    oauth2:
+      client:
+        registration:
+          frontui-client:
+            provider: spring
+            client-id: frontui-service
+            client-secret: frontui-secret
+            authorization-grant-type: client_credentials
+            scope: frontui
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
     filter:
       dispatcher-types: REQUEST, ASYNC, ERROR
     ignore:
@@ -45,6 +57,9 @@ service:
     # exchange: TEST #http://service-exchange # http://exchange-service:8085
     # transfer: TEST #http://service-transfer # http://transfer-service:8084
     # notifications: TEST #http://service-notifications # http://notifications-service:8088
+client:
+  registration:
+    id: "frontui-client"
 logging:
   level:
     root: INFO

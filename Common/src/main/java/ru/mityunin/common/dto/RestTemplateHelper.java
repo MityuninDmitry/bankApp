@@ -1,9 +1,7 @@
 package ru.mityunin.common.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.*;
@@ -16,6 +14,44 @@ public class RestTemplateHelper {
     public RestTemplateHelper(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+    }
+
+    public <T> ApiResponse<T> postForApiResponse(String url, Object request, Class<T> responseType, String token) {
+        try {
+            HttpHeaders headers = getJsonHeaders();
+            headers.setBearerAuth(token); // Добавляем Bearer токен
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    new HttpEntity<>(request, headers),
+                    String.class
+            );
+            return parseResponse(response.getBody(), responseType);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    public <T> ApiResponse<T> getForApiResponse(String url, Class<T> responseType, String token) {
+        try {
+            HttpHeaders headers = getJsonHeaders();
+            headers.setBearerAuth(token); // Добавляем Bearer токен
+
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    new HttpEntity<>(getJsonHeaders(), headers),
+                    String.class
+            );
+
+            return parseResponse(response.getBody(), responseType);
+        } catch (HttpStatusCodeException e) {
+            return parseErrorResponse(e.getResponseBodyAsString(), responseType);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
 
     // GET-запрос с возвратом ApiResponse

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 import ru.mityunin.dto.*;
@@ -16,9 +17,9 @@ import java.util.*;
 public class AccountsService {
     private static final Logger log = LoggerFactory.getLogger(AccountsService.class);
     private final String accountsServiceUrl;
-    private final RestTemplateHelper restTemplateHelper;
+    private final AuthenticatedRestTemplateService restTemplateHelper;
 
-    public AccountsService(@Value("${service.url.gateway}") String accountsServiceUrl, RestTemplateHelper restTemplateHelper) {
+    public AccountsService(@Value("${service.url.gateway}") String accountsServiceUrl, AuthenticatedRestTemplateService restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
     }
