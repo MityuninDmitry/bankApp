@@ -21,14 +21,18 @@ public class GatewaySecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/frontui/**").hasAuthority("SCOPE_frontui")
+                        .requestMatchers("/notifications/**").hasAnyAuthority(
+                                "SCOPE_accounts","SCOPE_frontui","SCOPE_blocker","SCOPE_transfer")
                         .requestMatchers("/accounts/api/**").hasAnyAuthority(
                                 "SCOPE_frontui", "SCOPE_cash", "SCOPE_transfer")
-                        .requestMatchers("/cash/api/**").hasAuthority("SCOPE_cash")
-                        .requestMatchers("/transfer/api/**").hasAuthority("SCOPE_transfer")
-                        .requestMatchers("/blocker/api/**").hasAuthority("SCOPE_cash")
-                        .requestMatchers("/exchangegenerator/api/**").hasAuthority("SCOPE_exchange")
+                        .requestMatchers("/cash/api/**").hasAuthority("SCOPE_frontui")
+                        .requestMatchers("/transfer/api/**").hasAnyAuthority(
+                                "SCOPE_frontui")
+                        .requestMatchers("/blocker/api/**").hasAnyAuthority(
+                                "SCOPE_cash","SCOPE_transfer")
                         .requestMatchers("/exchange/api/**").hasAnyAuthority(
                                 "SCOPE_frontui", "SCOPE_transfer")
+                        .requestMatchers("/exchangegenerator/api/**").hasAuthority("SCOPE_exchange")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
