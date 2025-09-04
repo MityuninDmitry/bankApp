@@ -39,8 +39,8 @@ public class GatewaySecurityConfig {
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
-                )
-                .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+                );
+                //.addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

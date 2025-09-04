@@ -71,8 +71,8 @@ client:
     id: "accounts-client"
 logging:
   level:
-    root: DEBUG
+    root: INFO
   org:
-    org.springframework.web.servlet.mvc: DEBUG
-    org.springframework.web.servlet.handler: DEBUG
-    org.springframework.web.servlet.resource: DEBUG
+    org.springframework.web.servlet.mvc: INFO
+    org.springframework.web.servlet.handler: INFO
+    org.springframework.web.servlet.resource: INFO
