@@ -39,3 +39,10 @@ service:
 client:
   registration:
     id: "transfer-client"
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+    org.springframework.retry: DEBUG
+    org.springframework.aop: DEBUG
+    ru.mityunin: DEBUG
