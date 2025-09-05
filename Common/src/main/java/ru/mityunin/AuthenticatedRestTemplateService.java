@@ -1,7 +1,9 @@
 package ru.mityunin;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,12 @@ import org.springframework.stereotype.Service;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 
+import java.util.function.Supplier;
+
 @Service
 public class AuthenticatedRestTemplateService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticatedRestTemplateService.class);
+
     @Autowired
     private OAuth2AuthorizedClientManager authorizedClientManager;
 
@@ -29,12 +34,45 @@ public class AuthenticatedRestTemplateService {
     @Value("${client.registration.id}")
     private String clientRegistrationId;
 
+    private final CircuitBreaker circuitBreaker;
+    private final Retry retry;
 
-    @Retry(name = "externalServiceRetry", fallbackMethod = "fallbackMethod")
-    @CircuitBreaker(name = "externalServiceCircuitBreaker", fallbackMethod = "fallbackMethod")
+    @Autowired
+    public AuthenticatedRestTemplateService(
+            CircuitBreakerRegistry circuitBreakerRegistry,
+            RetryRegistry retryRegistry) {
+        this.circuitBreaker = circuitBreakerRegistry.circuitBreaker("externalServiceCircuitBreaker");
+        this.retry = retryRegistry.retry("externalServiceRetry");
+    }
+
     public <T> ApiResponse<T> getForApiResponse(String url, Class<T> responseType) {
+        try {
+            Supplier<ApiResponse<T>> supplier = () -> executeGetRequest(url, responseType); // вызов сервиса
+            Supplier<ApiResponse<T>> retryableSupplier = Retry.decorateSupplier(retry, supplier); // декоратор ретрая над вызовом
+            Supplier<ApiResponse<T>> circuitBreakerSupplier = CircuitBreaker.decorateSupplier(circuitBreaker, retryableSupplier); // сиркут бреакер над ретраеями
+
+            return circuitBreakerSupplier.get();
+        } catch (Exception e) {
+            return fallbackMethod(url, responseType, e);
+        }
+    }
+
+    public <T> ApiResponse<T> postForApiResponse(String url, Object request, Class<T> responseType) {
+        log.info("[AuthenticatedRestTemplateService] url: {}, request: {} ", url, request);
+        try {
+            Supplier<ApiResponse<T>> supplier = () -> executePostRequest(url, request, responseType);
+            Supplier<ApiResponse<T>> retryableSupplier = Retry.decorateSupplier(retry, supplier);
+            Supplier<ApiResponse<T>> circuitBreakerSupplier = CircuitBreaker.decorateSupplier(circuitBreaker, retryableSupplier);
+
+            return circuitBreakerSupplier.get();
+        } catch (Exception e) {
+            return fallbackMethod(url, request, responseType, e);
+        }
+    }
+
+    private <T> ApiResponse<T> executeGetRequest(String url, Class<T> responseType) {
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
-                .withClientRegistrationId(clientRegistrationId) // или другой сервис
+                .withClientRegistrationId(clientRegistrationId)
                 .principal("service")
                 .build();
 
@@ -42,19 +80,15 @@ public class AuthenticatedRestTemplateService {
 
         if (authorizedClient != null) {
             String token = authorizedClient.getAccessToken().getTokenValue();
-            // Добавляем токен в заголовок и делаем запрос
             return restTemplateHelper.getForApiResponse(url, responseType, token);
         }
 
         return ApiResponse.error("Failed to obtain access token");
     }
 
-    @Retry(name = "externalServiceRetry", fallbackMethod = "fallbackMethod")
-    @CircuitBreaker(name = "externalServiceCircuitBreaker", fallbackMethod = "fallbackMethod")
-    public <T> ApiResponse<T> postForApiResponse(String url, Object request, Class<T> responseType) {
-        log.info("[AuthenticatedRestTemplateService] url: {}, request: {} ", url, request);
+    private <T> ApiResponse<T> executePostRequest(String url, Object request, Class<T> responseType) {
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
-                .withClientRegistrationId(clientRegistrationId) // или другой сервис
+                .withClientRegistrationId(clientRegistrationId)
                 .principal("service")
                 .build();
 
@@ -62,26 +96,18 @@ public class AuthenticatedRestTemplateService {
 
         if (authorizedClient != null) {
             String token = authorizedClient.getAccessToken().getTokenValue();
-            // Добавляем токен в заголовок и делаем запрос
             return restTemplateHelper.postForApiResponse(url, request, responseType, token);
         }
 
         return ApiResponse.error("Failed to obtain access token");
     }
 
-
-    // Общий Fallback метод
-    // Важно: Сигнатура должна совпадать с оригинальным методом + последний параметр - Exception
+    // Fallback методы
     private <T> ApiResponse<T> fallbackMethod(String url, Object request, Class<T> responseType, Exception e) {
-        // Логируем ошибку
         log.error("Fallback triggered for request to {}. Reason: {}", url, e.getMessage());
-
-        // Возвращаем заглушку
-        // Можно создать разные заглушки для разных responseType, если необходимо
         return ApiResponse.error("Service temporarily unavailable. Fallback response. Reason: " + e.getMessage());
     }
 
-    // Перегруженный fallback для GET метода (у него нет параметра 'request')
     private <T> ApiResponse<T> fallbackMethod(String url, Class<T> responseType, Exception e) {
         log.error("Fallback triggered for GET request to {}. Reason: {}", url, e.getMessage());
         return ApiResponse.error("Service temporarily unavailable. Fallback response. Reason: " + e.getMessage());
