@@ -13,7 +13,7 @@ Contract.make {
         }
         body([
                 login: "testUser",
-                message: "Test message"
+                message: ""
         ])
     }
 

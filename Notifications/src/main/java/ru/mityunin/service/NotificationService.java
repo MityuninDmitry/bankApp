@@ -43,6 +43,14 @@ public class NotificationService {
     @Transactional
     public ApiResponse<Void> addNotification(AddNotificationRequestDto requestDto) {
         try {
+            if (requestDto.getMessage() == null || requestDto.getMessage().trim().isEmpty()) {
+                throw new IllegalArgumentException("Message cannot be empty");
+            }
+
+            if (requestDto.getLogin() == null || requestDto.getLogin().trim().isEmpty()) {
+                throw new IllegalArgumentException("Login cannot be empty");
+            }
+
             Notification notification = new Notification();
             notification.setLogin(requestDto.getLogin());
             notification.setUsed(false);

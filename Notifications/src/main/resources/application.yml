@@ -10,7 +10,7 @@ spring:
   application:
     name: service-notifications
   config:
-    import: "consul:"  # Add a spring.config.import=consul: property to your configuration.
+    import: "optional:consul:"  # Add a spring.config.import=consul: property to your configuration.
   cloud:
     consul:
       host: consul          # Адрес Consul (по умолчанию localhost)

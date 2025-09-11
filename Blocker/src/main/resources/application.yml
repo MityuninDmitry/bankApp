@@ -33,6 +33,16 @@ spring:
 service:
   url:
     gateway: TEST # http://service-notifications # http://notifications-service:8088
+  api:
+    notifications: "/notifications"
+
 client:
   registration:
     id: "blocker-client"
+
+security:
+  oauth2:
+    enabled: true
+
+resilience4j:
+  enabled: true

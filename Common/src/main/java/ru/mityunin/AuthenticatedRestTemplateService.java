@@ -34,6 +34,12 @@ public class AuthenticatedRestTemplateService {
     @Value("${client.registration.id}")
     private String clientRegistrationId;
 
+    @Value("${security.oauth2.enabled:true}")
+    private boolean oauth2Enabled;
+
+    @Value("${resilience4j.enabled:true}")
+    private boolean resilience4jEnabled;
+
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
 
@@ -47,11 +53,14 @@ public class AuthenticatedRestTemplateService {
 
     public <T> ApiResponse<T> getForApiResponse(String url, Class<T> responseType) {
         try {
-            Supplier<ApiResponse<T>> supplier = () -> executeGetRequest(url, responseType); // вызов сервиса
-            Supplier<ApiResponse<T>> retryableSupplier = Retry.decorateSupplier(retry, supplier); // декоратор ретрая над вызовом
-            Supplier<ApiResponse<T>> circuitBreakerSupplier = CircuitBreaker.decorateSupplier(circuitBreaker, retryableSupplier); // сиркут бреакер над ретраеями
-
-            return circuitBreakerSupplier.get();
+            if(resilience4jEnabled) {
+                Supplier<ApiResponse<T>> supplier = () -> executeGetRequest(url, responseType); // вызов сервиса
+                Supplier<ApiResponse<T>> retryableSupplier = Retry.decorateSupplier(retry, supplier); // декоратор ретрая над вызовом
+                Supplier<ApiResponse<T>> circuitBreakerSupplier = CircuitBreaker.decorateSupplier(circuitBreaker, retryableSupplier); // сиркут бреакер над ретраеями
+                return circuitBreakerSupplier.get();
+            } else {
+                return executeGetRequest(url,responseType);
+            }
         } catch (Exception e) {
             return fallbackMethod(url, responseType, e);
         }
@@ -60,46 +69,61 @@ public class AuthenticatedRestTemplateService {
     public <T> ApiResponse<T> postForApiResponse(String url, Object request, Class<T> responseType) {
         log.info("[AuthenticatedRestTemplateService] url: {}, request: {} ", url, request);
         try {
-            Supplier<ApiResponse<T>> supplier = () -> executePostRequest(url, request, responseType);
-            Supplier<ApiResponse<T>> retryableSupplier = Retry.decorateSupplier(retry, supplier);
-            Supplier<ApiResponse<T>> circuitBreakerSupplier = CircuitBreaker.decorateSupplier(circuitBreaker, retryableSupplier);
+            if(resilience4jEnabled) {
+                Supplier<ApiResponse<T>> supplier = () -> executePostRequest(url, request, responseType);
+                Supplier<ApiResponse<T>> retryableSupplier = Retry.decorateSupplier(retry, supplier);
+                Supplier<ApiResponse<T>> circuitBreakerSupplier = CircuitBreaker.decorateSupplier(circuitBreaker, retryableSupplier);
 
-            return circuitBreakerSupplier.get();
+                return circuitBreakerSupplier.get();
+            } else {
+                return executePostRequest(url, request, responseType);
+            }
+
         } catch (Exception e) {
             return fallbackMethod(url, request, responseType, e);
         }
     }
 
     private <T> ApiResponse<T> executeGetRequest(String url, Class<T> responseType) {
-        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
-                .withClientRegistrationId(clientRegistrationId)
-                .principal("service")
-                .build();
+        if (oauth2Enabled) {
+            OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                    .withClientRegistrationId(clientRegistrationId)
+                    .principal("service")
+                    .build();
 
-        OAuth2AuthorizedClient authorizedClient = authorizedClientManager.authorize(authorizeRequest);
+            OAuth2AuthorizedClient authorizedClient = authorizedClientManager.authorize(authorizeRequest);
 
-        if (authorizedClient != null) {
-            String token = authorizedClient.getAccessToken().getTokenValue();
-            return restTemplateHelper.getForApiResponse(url, responseType, token);
+            if (authorizedClient != null) {
+                String token = authorizedClient.getAccessToken().getTokenValue();
+                return restTemplateHelper.getForApiResponse(url, responseType, token);
+            }
+
+            return ApiResponse.error("Failed to obtain access token");
+        } else {
+            return restTemplateHelper.getForApiResponse(url, responseType);
         }
 
-        return ApiResponse.error("Failed to obtain access token");
     }
 
     private <T> ApiResponse<T> executePostRequest(String url, Object request, Class<T> responseType) {
-        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
-                .withClientRegistrationId(clientRegistrationId)
-                .principal("service")
-                .build();
+        if (oauth2Enabled) {
+            OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                    .withClientRegistrationId(clientRegistrationId)
+                    .principal("service")
+                    .build();
 
-        OAuth2AuthorizedClient authorizedClient = authorizedClientManager.authorize(authorizeRequest);
+            OAuth2AuthorizedClient authorizedClient = authorizedClientManager.authorize(authorizeRequest);
 
-        if (authorizedClient != null) {
-            String token = authorizedClient.getAccessToken().getTokenValue();
-            return restTemplateHelper.postForApiResponse(url, request, responseType, token);
+            if (authorizedClient != null) {
+                String token = authorizedClient.getAccessToken().getTokenValue();
+                return restTemplateHelper.postForApiResponse(url, request, responseType, token);
+            }
+
+            return ApiResponse.error("Failed to obtain access token");
+        } else {
+            return restTemplateHelper.postForApiResponse(url, request, responseType);
         }
 
-        return ApiResponse.error("Failed to obtain access token");
     }
 
     // Fallback методы

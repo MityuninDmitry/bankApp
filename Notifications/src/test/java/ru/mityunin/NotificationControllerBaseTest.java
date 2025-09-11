@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext
 @AutoConfigureMessageVerifier
+@ActiveProfiles("test")
 public class NotificationControllerBaseTest {
 
     @Autowired
