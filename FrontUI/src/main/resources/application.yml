@@ -69,4 +69,10 @@ logging:
     boot: DEBUG
 
 
+security:
+  oauth2:
+    enabled: true
+
+resilience4j:
+  enabled: true
 

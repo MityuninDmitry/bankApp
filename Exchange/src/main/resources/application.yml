@@ -10,7 +10,7 @@ spring:
   application:
     name: service-exchange
   config:
-    import: "consul:"  # Add a spring.config.import=consul: property to your configuration.
+    import: "optional:consul:"  # Add a spring.config.import=consul: property to your configuration.
   cloud:
     consul:
       host: consul          # Адрес Consul (по умолчанию localhost)
@@ -39,6 +39,15 @@ spring:
 service:
   url:
     gateway: TEST # http://service-exchange-generator # http://exchange-generator-service:8086
+  api:
+    exchangegenerator: "/exchangegenerator"
 client:
   registration:
     id: "exchange-client"
+
+security:
+  oauth2:
+    enabled: true
+
+resilience4j:
+  enabled: true

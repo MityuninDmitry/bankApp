@@ -20,14 +20,19 @@ public class ExchangeService {
 
     private final String serviceUrl;
     private final AuthenticatedRestTemplateService restTemplateHelper;
+    private final String apiExchangeGenerator;
 
-    public ExchangeService(@Value("${service.url.gateway}") String serviceUrl, AuthenticatedRestTemplateService restTemplateHelper) {
+    public ExchangeService(
+            @Value("${service.url.gateway}") String serviceUrl,
+            @Value("${service.api.exchangegenerator}") String apiExchangeGenerator,
+            AuthenticatedRestTemplateService restTemplateHelper) {
         this.serviceUrl = serviceUrl;
         this.restTemplateHelper = restTemplateHelper;
+        this.apiExchangeGenerator = apiExchangeGenerator;
     }
 
     public ApiResponse<List<ExchangeCurrencyDto>> actualCurrencies() {
-        String url = serviceUrl + "/exchangegenerator/api/currencies";
+        String url = serviceUrl + apiExchangeGenerator + "/api/currencies";
         ApiResponse<ExchangeCurrencyDto[]> response = restTemplateHelper.getForApiResponse(url, ExchangeCurrencyDto[].class);
         return new ApiResponse<>(
                 response.isSuccess(),
@@ -37,7 +42,7 @@ public class ExchangeService {
     }
 
     public ApiResponse<List<ExchangeCurrencyFrontUIDto>> actualCurrenciesFrontUI() {
-        String url = serviceUrl + "/exchangegenerator/api/currencies";
+        String url = serviceUrl + apiExchangeGenerator + "/api/currencies";
         ApiResponse<ExchangeCurrencyDto[]> response = restTemplateHelper.getForApiResponse(url, ExchangeCurrencyDto[].class);
         List<ExchangeCurrencyFrontUIDto> exchangeCurrencyFrontUIDtoList = new ArrayList<>();
         HashMap<String, ExchangeCurrencyFrontUIDto> hashMap = new HashMap<>();

@@ -46,3 +46,10 @@ logging:
     org.springframework.retry: DEBUG
     org.springframework.aop: DEBUG
     ru.mityunin: DEBUG
+
+security:
+  oauth2:
+    enabled: true
+
+resilience4j:
+  enabled: true

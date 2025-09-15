@@ -1,0 +1,44 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  # Полностью отключаем security
+  security:
+    enabled: false
+    oauth2:
+      client:
+        enabled: false
+        registration:
+          notifications-client:
+            enabled: false
+      resourceserver:
+        enabled: false
+
+  # Отключаем Consul
+  cloud:
+    consul:
+      enabled: false
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+    config:
+      import: ""
+    circuitbreaker:
+      enabled: false
+    loadbalancer:
+      enabled: false
+
+  # URL для тестов
+service:
+  url:
+    gateway: "http://localhost:8080"
+  api:
+    exchangegenerator: ""
+
+security:
+  oauth2:
+    enabled: false
+
+resilience4j:
+  enabled: false

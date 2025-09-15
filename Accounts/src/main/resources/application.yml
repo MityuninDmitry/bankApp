@@ -76,3 +76,10 @@ logging:
     org.springframework.web.servlet.mvc: INFO
     org.springframework.web.servlet.handler: INFO
     org.springframework.web.servlet.resource: INFO
+
+security:
+  oauth2:
+    enabled: true
+
+resilience4j:
+  enabled: true

@@ -27,5 +27,6 @@ public class ExchangeCurrency {
     @Column(name = "currency_to")
     private CurrencyType currencyTo;
 
+    @Column(name = "\"value\"")
     private int value;
 }
