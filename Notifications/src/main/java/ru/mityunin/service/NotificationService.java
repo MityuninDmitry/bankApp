@@ -30,14 +30,16 @@ public class NotificationService {
                 .map(mapper::notificationToNotificationDto)
                 .toList();
 
-        repository.saveAll(
-                list.stream().map(notification -> {
-                    notification.setUsed(true);
-                    return notification;
-                }).toList()
-        );
+        if (!notificationDtoList.isEmpty()) {
+            repository.saveAll(
+                    list.stream().map(notification -> {
+                        notification.setUsed(true);
+                        return notification;
+                    }).toList()
+            );
+        }
 
-        return ApiResponse.success("Список нотификаций",notificationDtoList);
+        return ApiResponse.success("Список нотификаций ",notificationDtoList);
     }
 
     @Transactional

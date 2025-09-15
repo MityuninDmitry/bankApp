@@ -1,4 +1,16 @@
 spring:
+  # Полностью отключаем security
+  security:
+    enabled: false
+    oauth2:
+      client:
+        enabled: false
+        registration:
+          notifications-client:
+            enabled: false
+      resourceserver:
+        enabled: false
+
   cloud:
     consul:
       enabled: false  # Полностью отключаем Consul
@@ -34,3 +46,9 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
 
+security:
+  oauth2:
+    enabled: false
+
+resilience4j:
+  enabled: false
