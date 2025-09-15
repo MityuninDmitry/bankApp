@@ -56,9 +56,9 @@ public class ExchangeGeneratorService {
     public ApiResponse<ExchangeCurrency> getLastCurrencyBy(CurrencyType currencyFrom, CurrencyType currencyTo) {
          List<ExchangeCurrency> exchangeCurrencyList = exchangeCurrencyRepository.findByCurrencyFromAndCurrencyToOrderByLocalDateTimeDesc(currencyFrom,currencyTo);
          if (exchangeCurrencyList.isEmpty()) {
-             return ApiResponse.error("Не найден курс валют для" + currencyFrom.toString() + " и " + currencyTo.toString());
+             return ApiResponse.error("Не найден курс валют для " + currencyFrom.toString() + " и " + currencyTo.toString());
          } else {
-             return ApiResponse.success("Найден курс валют",exchangeCurrencyList.getLast());
+             return ApiResponse.success("Найден курс валют ",exchangeCurrencyList.getLast());
          }
 
     }
@@ -71,7 +71,7 @@ public class ExchangeGeneratorService {
                 .map(exchangeCurrency ->
                         exchangeCurrencyMapper.exchangeCurrencyToExchangeCurrencyDto(exchangeCurrency))
                 .toList();
-        return ApiResponse.success("Актуальные курсы валют", exchangeCurrencyList);
+        return ApiResponse.success("Актуальные курсы валют ", exchangeCurrencyList);
     }
 
     private int getRandomValue() {
