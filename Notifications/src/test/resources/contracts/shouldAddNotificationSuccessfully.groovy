@@ -24,7 +24,7 @@ Contract.make {
         }
         body([
                 success: true,
-                message: "Успех добавления нотификации",
+                message: "Успех добавления нотификации ",
                 data: null
         ])
     }

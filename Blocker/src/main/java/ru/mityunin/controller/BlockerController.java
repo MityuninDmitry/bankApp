@@ -13,6 +13,8 @@ import ru.mityunin.dto.CashOperationRequestDto;
 import ru.mityunin.service.BlockerService;
 import ru.mityunin.service.NotificationService;
 
+import java.math.BigDecimal;
+
 @Controller
 @RequestMapping("/api")
 public class BlockerController {
@@ -38,8 +40,8 @@ public class BlockerController {
     }
 
     @PostMapping("/isBlockerOperation")
-    public ResponseEntity<ApiResponse<Void>> processOperation() {
-        ApiResponse<Void> apiResponse = blockerService.isSuspiciousOperation();
+    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody BigDecimal value) {
+        ApiResponse<Void> apiResponse = blockerService.isSuspiciousOperation(value);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

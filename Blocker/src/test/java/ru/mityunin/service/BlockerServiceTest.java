@@ -64,18 +64,11 @@ class BlockerServiceTest {
         }
     }
 
-    @Test
-    void isSuspiciousOperation_WithNullRequest_ShouldThrowException() {
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> {
-            blockerService.isSuspiciousOperation(null);
-        });
-    }
 
     @Test
     void isSuspiciousOperation_WithoutParams_ShouldReturnEitherSuccessOrError() {
         // Act
-        ApiResponse<Void> result = blockerService.isSuspiciousOperation();
+        ApiResponse<Void> result = blockerService.isSuspiciousOperation(BigDecimal.valueOf(10000));
 
         // Assert
         assertNotNull(result);

@@ -4,7 +4,7 @@ spring:
   application:
     name: service-accounts
   config:
-    import: "consul:" # Add a spring.config.import=consul: property to your configuration.
+    import: "optional:consul:" # Add a spring.config.import=consul: property to your configuration.
   cloud:
     consul:
       host: consul          # Адрес Consul (по умолчанию localhost)
@@ -66,6 +66,9 @@ management:
 service:
   url:
     gateway: TEST # http://service-gateway # http://service-notifications # http://notifications-service:8088
+  api:
+    notifications: "/notifications"
+
 client:
   registration:
     id: "accounts-client"

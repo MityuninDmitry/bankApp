@@ -4,7 +4,7 @@ spring:
   application:
     name: service-cash
   config:
-    import: "consul:" # Add a spring.config.import=consul: property to your configuration.
+    import: "optional:consul:" # Add a spring.config.import=consul: property to your configuration.
   cloud:
     consul:
       host: consul          # Адрес Consul (по умолчанию localhost)
@@ -32,9 +32,11 @@ spring:
             token-uri: http://auth-service:9000/oauth2/token
 service:
   url:
-    gateway: TEST # http://service-accounts # http://accounts-service:8082
-    # blocker: TEST # http://service-blocker # http://blocker-service:8087
-    # notifications: TEST # http://service-notifications # http://notifications-service:8088
+    gateway: TEST
+  api:
+    accounts: "/accounts"
+    blocker: "/blocker"
+
 client:
   registration:
     id: "cash-client"

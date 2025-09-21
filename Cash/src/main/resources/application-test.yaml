@@ -32,9 +32,10 @@ spring:
   # URL для тестов
 service:
   url:
-    gateway: "http://localhost:8080"
+    gateway: ""
   api:
-    notifications: ""
+    accounts: "http://localhost:8080"
+    blocker: "http://localhost:8081"
 
 security:
   oauth2:
