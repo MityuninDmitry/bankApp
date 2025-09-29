@@ -6,6 +6,8 @@ import ru.mityunin.AuthenticatedRestTemplateService;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.common.dto.RestTemplateHelper;
 
+import java.math.BigDecimal;
+
 @Service
 public class BlockerService {
 
@@ -21,9 +23,9 @@ public class BlockerService {
         this.restTemplateHelper = restTemplateHelper;
     }
 
-    public ApiResponse<Void> isBlockerOperation() {
+    public ApiResponse<Void> isBlockerOperation(BigDecimal value) {
         String blockerUrl = blockerServiceUrl + apiBlocker + "/api/isBlockerOperation";
-        ApiResponse<Void> suspiciousOperationResponse = restTemplateHelper.postForApiResponse(blockerUrl, null, Void.class);
+        ApiResponse<Void> suspiciousOperationResponse = restTemplateHelper.postForApiResponse(blockerUrl, value, Void.class);
         return suspiciousOperationResponse;
     }
 

@@ -30,7 +30,7 @@ public class TransferController {
     @PostMapping("/transferRequest")
     public ResponseEntity<ApiResponse<Void>> transferRequest(@RequestBody TransferRequestDto transferRequestDto) {
         log.info("[Transfer] TransferController: transferRequestDto {}", transferRequestDto);
-        ApiResponse<Void> isBlockerResponse = blockerService.isBlockerOperation();
+        ApiResponse<Void> isBlockerResponse = blockerService.isBlockerOperation(transferRequestDto.getValue());
         if (isBlockerResponse.isSuccess()) {
             ApiResponse<Void> apiResponse = transferService.transferOperation(transferRequestDto);
             if (apiResponse.isSuccess()) {

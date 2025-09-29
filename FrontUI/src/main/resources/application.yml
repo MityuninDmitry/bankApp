@@ -51,12 +51,7 @@ spring:
       - /webjars/**
 service:
   url:
-    gateway: TEST #http://service-accounts # http://accounts-service:8082
-    # cash: TEST #http://service-cash # http://cash-service:8083
-    # exchangegenerator: http://service-exchange-generator # http://exchange-generator-service:8086
-    # exchange: TEST #http://service-exchange # http://exchange-service:8085
-    # transfer: TEST #http://service-transfer # http://transfer-service:8084
-    # notifications: TEST #http://service-notifications # http://notifications-service:8088
+    gateway: TEST
 client:
   registration:
     id: "frontui-client"
