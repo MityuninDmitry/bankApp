@@ -23,6 +23,10 @@ public class TransferService {
     private static final Logger log = LoggerFactory.getLogger(TransferService.class);
     private final String accountsServiceUrl;
     private final String exchangeServiceUrl;
+    @Value("${service.api.accounts}")
+    private String apiAccounts;
+    @Value("${service.api.exchange}")
+    private String apiExchange;
     private final AuthenticatedRestTemplateService restTemplateHelper;
 
     public TransferService(
@@ -38,9 +42,9 @@ public class TransferService {
     public ApiResponse<Void> transferOperation(TransferRequestDto transferRequestDto) {
         log.info("[TransferService] transferOperation {}", transferRequestDto);
         // ссылки на эндпоинты
-        String accountsUrl = accountsServiceUrl + "/accounts/api/processOperation";
-        String accountInfoUrl = accountsServiceUrl + "/accounts/api/accountInfo";
-        String exchangeUrl = exchangeServiceUrl + "/exchange/api/currencies";
+        String accountsUrl = accountsServiceUrl + apiAccounts + "/api/processOperation";
+        String accountInfoUrl = accountsServiceUrl + apiAccounts + "/api/accountInfo";
+        String exchangeUrl = exchangeServiceUrl + apiExchange + "/api/currencies";
 
         // выясняем тип валюты счетов откуда и куда перевод
         ApiResponse<PaymentAccountDto> accountInfoFrom = restTemplateHelper.postForApiResponse(accountInfoUrl, transferRequestDto.getAccountNumberFrom(), PaymentAccountDto.class);

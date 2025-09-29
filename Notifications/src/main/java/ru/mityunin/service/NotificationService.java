@@ -59,7 +59,7 @@ public class NotificationService {
             notification.setMessage(requestDto.getMessage());
             notification.setLocalDateTime(LocalDateTime.now());
             repository.save(notification);
-            return ApiResponse.success("Успех добавления нотификации");
+            return ApiResponse.success("Успех добавления нотификации ");
         } catch (Exception e) {
             return ApiResponse.error("Ошибка: " + e.getMessage());
         }

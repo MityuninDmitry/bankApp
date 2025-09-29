@@ -99,7 +99,7 @@ class NotificationServiceTest {
 
         // Assert
         assertTrue(response.isSuccess());
-        assertEquals("Успех добавления нотификации", response.getMessage());
+        assertEquals("Успех добавления нотификации ", response.getMessage());
         verify(repository, times(1)).save(any(Notification.class));
     }
 
