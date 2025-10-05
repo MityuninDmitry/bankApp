@@ -1,5 +1,6 @@
 package ru.mityunin.controller;
 
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class CashController {
     }
 
     @PostMapping("/processOperation")
-    public ResponseEntity<ApiResponse<Void>> processOperation(@RequestBody CashOperationRequestDto cashOperationRequestDto) {
+    public ResponseEntity<ApiResponse<Void>> processOperation(@Valid @RequestBody CashOperationRequestDto cashOperationRequestDto) {
         log.info("CashController: process operation {}", cashOperationRequestDto);
         ApiResponse<Void> apiResponse = cashService.processOperation(cashOperationRequestDto);
         if (apiResponse.isSuccess()) {

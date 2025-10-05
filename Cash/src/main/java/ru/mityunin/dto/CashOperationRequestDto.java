@@ -16,11 +16,11 @@ import java.math.BigDecimal;
 public class CashOperationRequestDto {
     @NotBlank(message = "AccountNumber is required")
     private String accountNumber;
-    @NotBlank(message = "Action with money[DEPOSIT, WITHDRAWN] is required")
+    @NotNull(message = "Action with money[DEPOSIT, WITHDRAWN] is required")
     private CashOperation action;
     @NotNull(message = "Money cannot be null")
     @DecimalMin(value = "0.0", message = "Money must be positive")
     private BigDecimal money;
-    @NotNull(message = "Login cannot be null")
+    @NotBlank(message = "Login cannot be blank")
     private String login;
 }
