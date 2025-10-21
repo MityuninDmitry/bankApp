@@ -17,6 +17,9 @@ public class CashService {
     private final String serviceUrl;
     private final AuthenticatedRestTemplateService restTemplateHelper;
 
+    @Value("${service.api.cash}")
+    private String apiCash;
+
     public CashService(
             @Value("${service.url.gateway}") String serviceUrl,
             AuthenticatedRestTemplateService restTemplateHelper) {
@@ -26,7 +29,7 @@ public class CashService {
 
     public ApiResponse<Void> processOperation(CashOperationRequestDto cashOperationRequestDto) {
         log.info("Cash operation request {}", cashOperationRequestDto);
-        String url = serviceUrl + "/cash/api/processOperation";
+        String url = serviceUrl + apiCash + "/api/processOperation";
         return restTemplateHelper.postForApiResponse(url, cashOperationRequestDto, Void.class);
     }
 }

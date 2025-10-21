@@ -34,9 +34,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // Создаем счета
         List<PaymentAccount> accounts = List.of(
-                createAccount(CurrencyType.RUB, new BigDecimal("2.00"), user),
-                createAccount(CurrencyType.CNY, new BigDecimal("2.00"), user),
-                createAccount(CurrencyType.USD, new BigDecimal("2.00"), user)
+                createAccount(CurrencyType.RUB, new BigDecimal("2.00"), user)
         );
 
         user.setPaymentAccounts(accounts);

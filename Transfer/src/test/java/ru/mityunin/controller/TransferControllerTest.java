@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.mityunin.common.dto.ApiResponse;
 import ru.mityunin.dto.TransferRequestDto;
-import ru.mityunin.service.BlockerService;
 import ru.mityunin.service.NotificationService;
 import ru.mityunin.service.TransferService;
 
@@ -30,8 +29,6 @@ class TransferControllerTest {
     @Mock
     private NotificationService notificationService;
 
-    @Mock
-    private BlockerService blockerService;
 
     @InjectMocks
     private TransferController transferController;
@@ -53,7 +50,6 @@ class TransferControllerTest {
     void transferRequest_WhenBlockerServiceBlocks_ShouldReturnBadRequest() {
         // Arrange
         ApiResponse<Void> blockerResponse = ApiResponse.error("Operation blocked");
-        when(blockerService.isBlockerOperation(transferAmount)).thenReturn(blockerResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Operation blocked")))
                 .thenReturn(ApiResponse.success("Notification sent"));
 
@@ -66,7 +62,6 @@ class TransferControllerTest {
         assertFalse(response.getBody().isSuccess());
         assertEquals("Operation blocked", response.getBody().getMessage());
 
-        verify(blockerService).isBlockerOperation(transferAmount);
         verify(notificationService).sendNotification(testLogin, "Operation blocked");
         verify(transferService, never()).transferOperation(any());
     }
@@ -77,7 +72,6 @@ class TransferControllerTest {
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
         ApiResponse<Void> transferResponse = ApiResponse.success("Transfer completed successfully");
 
-        when(blockerService.isBlockerOperation(transferAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Transfer completed successfully")))
                 .thenReturn(ApiResponse.success("Notification sent"));
@@ -91,7 +85,6 @@ class TransferControllerTest {
         assertTrue(response.getBody().isSuccess());
         assertEquals("Transfer completed successfully", response.getBody().getMessage());
 
-        verify(blockerService).isBlockerOperation(transferAmount);
         verify(transferService).transferOperation(transferRequestDto);
         verify(notificationService).sendNotification(testLogin, "Transfer completed successfully");
     }
@@ -102,7 +95,6 @@ class TransferControllerTest {
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
         ApiResponse<Void> transferResponse = ApiResponse.error("Insufficient funds");
 
-        when(blockerService.isBlockerOperation(transferAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Insufficient funds")))
                 .thenReturn(ApiResponse.success("Notification sent"));
@@ -116,7 +108,6 @@ class TransferControllerTest {
         assertFalse(response.getBody().isSuccess());
         assertEquals("Insufficient funds", response.getBody().getMessage());
 
-        verify(blockerService).isBlockerOperation(transferAmount);
         verify(transferService).transferOperation(transferRequestDto);
         verify(notificationService).sendNotification(testLogin, "Insufficient funds");
     }
@@ -128,7 +119,6 @@ class TransferControllerTest {
         ApiResponse<Void> transferResponse = ApiResponse.success("Transfer completed successfully");
         ApiResponse<Void> notificationResponse = ApiResponse.error("Failed to send notification");
 
-        when(blockerService.isBlockerOperation(transferAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Transfer completed successfully")))
                 .thenReturn(notificationResponse);
@@ -143,7 +133,6 @@ class TransferControllerTest {
         assertTrue(response.getBody().isSuccess());
         assertEquals("Transfer completed successfully", response.getBody().getMessage());
 
-        verify(blockerService).isBlockerOperation(transferAmount);
         verify(transferService).transferOperation(transferRequestDto);
         verify(notificationService).sendNotification(testLogin, "Transfer completed successfully");
     }
@@ -168,7 +157,6 @@ class TransferControllerTest {
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
         ApiResponse<Void> transferResponse = ApiResponse.success("Small transfer completed");
 
-        when(blockerService.isBlockerOperation(smallAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Small transfer completed")))
                 .thenReturn(ApiResponse.success("Notification sent"));
@@ -180,7 +168,6 @@ class TransferControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().isSuccess());
 
-        verify(blockerService).isBlockerOperation(smallAmount);
         verify(transferService).transferOperation(transferRequestDto);
     }
 
@@ -193,7 +180,6 @@ class TransferControllerTest {
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
         ApiResponse<Void> transferResponse = ApiResponse.success("Large transfer completed");
 
-        when(blockerService.isBlockerOperation(largeAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Large transfer completed")))
                 .thenReturn(ApiResponse.success("Notification sent"));
@@ -205,25 +191,7 @@ class TransferControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().isSuccess());
 
-        verify(blockerService).isBlockerOperation(largeAmount);
         verify(transferService).transferOperation(transferRequestDto);
-    }
-
-    @Test
-    void transferRequest_WhenBlockerServiceThrowsException_ShouldPropagateException() {
-        // Arrange
-        when(blockerService.isBlockerOperation(transferAmount))
-                .thenThrow(new RuntimeException("Blocker service unavailable"));
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            transferController.transferRequest(transferRequestDto);
-        });
-
-        assertEquals("Blocker service unavailable", exception.getMessage());
-        verify(blockerService).isBlockerOperation(transferAmount);
-        verify(transferService, never()).transferOperation(any());
-        verify(notificationService, never()).sendNotification(any(), any());
     }
 
     @Test
@@ -235,7 +203,6 @@ class TransferControllerTest {
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
         ApiResponse<Void> transferResponse = ApiResponse.success("Zero transfer completed");
 
-        when(blockerService.isBlockerOperation(zeroAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Zero transfer completed")))
                 .thenReturn(ApiResponse.success("Notification sent"));
@@ -247,7 +214,6 @@ class TransferControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().isSuccess());
 
-        verify(blockerService).isBlockerOperation(zeroAmount);
         verify(transferService).transferOperation(transferRequestDto);
     }
 
@@ -258,7 +224,6 @@ class TransferControllerTest {
         transferRequestDto.setValue(negativeAmount);
 
         ApiResponse<Void> blockerResponse = ApiResponse.error("Negative amount not allowed");
-        when(blockerService.isBlockerOperation(negativeAmount)).thenReturn(blockerResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Negative amount not allowed")))
                 .thenReturn(ApiResponse.success("Notification sent"));
 
@@ -269,7 +234,6 @@ class TransferControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertFalse(response.getBody().isSuccess());
 
-        verify(blockerService).isBlockerOperation(negativeAmount);
         verify(transferService, never()).transferOperation(any());
     }
 
@@ -282,7 +246,6 @@ class TransferControllerTest {
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
         ApiResponse<Void> transferResponse = ApiResponse.success("Exact transfer completed");
 
-        when(blockerService.isBlockerOperation(exactAmount)).thenReturn(blockerResponse);
         when(transferService.transferOperation(transferRequestDto)).thenReturn(transferResponse);
         when(notificationService.sendNotification(eq(testLogin), eq("Exact transfer completed")))
                 .thenReturn(ApiResponse.success("Notification sent"));
@@ -294,6 +257,5 @@ class TransferControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         // Проверяем, что передается именно то значение, которое пришло в запросе
-        verify(blockerService).isBlockerOperation(exactAmount);
     }
 }

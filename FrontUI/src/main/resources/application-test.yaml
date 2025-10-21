@@ -34,7 +34,10 @@ service:
   url:
     gateway: "http://localhost:8080"
   api:
+    accounts: ""
+    cash: ""
     notifications: ""
+    transfer: ""
 
 security:
   oauth2:

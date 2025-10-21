@@ -37,8 +37,6 @@ class CashServiceTest {
         cashService = new CashService(
                 accountsServiceUrl,
                 blockerServiceUrl,
-                apiAccounts,
-                apiBlocker,
                 restTemplateHelper
         );
 

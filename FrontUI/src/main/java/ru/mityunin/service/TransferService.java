@@ -15,6 +15,9 @@ public class TransferService {
     private final String transferServiceUrl;
     private final AuthenticatedRestTemplateService restTemplateHelper;
 
+    @Value("${service.api.transfer}")
+    private String apiTransfer;
+
     public TransferService(@Value("${service.url.gateway}") String transferServiceUrl, AuthenticatedRestTemplateService restTemplateHelper) {
         this.transferServiceUrl = transferServiceUrl;
         this.restTemplateHelper = restTemplateHelper;
@@ -22,7 +25,7 @@ public class TransferService {
 
     public ApiResponse<Void> transferRequest(TransferRequestDto transferRequestDto) {
         log.info("Cash operation request {}", transferRequestDto);
-        String url = transferServiceUrl + "/transfer/api/transferRequest";
+        String url = transferServiceUrl + apiTransfer + "/api/transferRequest";
         return restTemplateHelper.postForApiResponse(url, transferRequestDto, Void.class);
     }
 }

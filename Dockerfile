@@ -8,9 +8,6 @@ COPY Accounts/pom.xml Accounts/
 COPY Cash/pom.xml Cash/
 COPY Common/pom.xml Common/
 COPY Transfer/pom.xml Transfer/
-COPY Exchange/pom.xml Exchange/
-COPY ExchangeGenerator/pom.xml ExchangeGenerator/
-COPY Blocker/pom.xml Blocker/
 COPY Notifications/pom.xml Notifications/
 COPY Gateway/pom.xml Gateway/
 COPY FrontUI/pom.xml FrontUI/
@@ -34,15 +31,6 @@ RUN mvn clean package -pl Cash -am -DskipTests
 
 FROM builder as transfer-builder
 RUN mvn clean package -pl Transfer -am -DskipTests
-
-FROM builder as exchange-builder
-RUN mvn clean package -pl Exchange -am -DskipTests
-
-FROM builder as exchange-generator-builder
-RUN mvn clean package -pl ExchangeGenerator -am -DskipTests
-
-FROM builder as blocker-builder
-RUN mvn clean package -pl Blocker -am -DskipTests
 
 FROM builder as notifications-builder
 RUN mvn clean package -pl Notifications -am -DskipTests
@@ -71,15 +59,6 @@ COPY --from=cash-builder /app/Cash/target/Cash-*.jar app.jar
 
 FROM base as transfer-service
 COPY --from=transfer-builder /app/Transfer/target/Transfer-*.jar app.jar
-
-FROM base as exchange-service
-COPY --from=exchange-builder /app/Exchange/target/Exchange-*.jar app.jar
-
-FROM base as exchange-generator-service
-COPY --from=exchange-generator-builder /app/ExchangeGenerator/target/ExchangeGenerator-*.jar app.jar
-
-FROM base as blocker-service
-COPY --from=blocker-builder /app/Blocker/target/Blocker-*.jar app.jar
 
 FROM base as notifications-service
 COPY --from=notifications-builder /app/Notifications/target/Notifications-*.jar app.jar

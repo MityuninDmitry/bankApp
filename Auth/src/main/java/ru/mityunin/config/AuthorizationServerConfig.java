@@ -66,17 +66,6 @@ public class AuthorizationServerConfig {
                                 .build())
                         .build(),
 
-                RegisteredClient.withId("blocker-client")
-                        .clientId("blocker-service")
-                        .clientSecret(passwordEncoder.encode("blocker-secret"))
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                        .scope("blocker")
-                        .tokenSettings(TokenSettings.builder()
-                                .accessTokenTimeToLive(Duration.ofHours(1))
-                                .build())
-                        .build(),
-
                 // Cash service client
                 RegisteredClient.withId("cash-client")
                         .clientId("cash-service")
@@ -84,28 +73,6 @@ public class AuthorizationServerConfig {
                         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                         .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                         .scope("cash")
-                        .tokenSettings(TokenSettings.builder()
-                                .accessTokenTimeToLive(Duration.ofHours(1))
-                                .build())
-                        .build(),
-
-                RegisteredClient.withId("exchange-client")
-                        .clientId("exchange-service")
-                        .clientSecret(passwordEncoder.encode("exchange-secret"))
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                        .scope("exchange")
-                        .tokenSettings(TokenSettings.builder()
-                                .accessTokenTimeToLive(Duration.ofHours(1))
-                                .build())
-                        .build(),
-
-                RegisteredClient.withId("exchange-generator-client")
-                        .clientId("exchange-generator-service")
-                        .clientSecret(passwordEncoder.encode("exchange-generator-secret"))
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                        .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                        .scope("exchange-generator")
                         .tokenSettings(TokenSettings.builder()
                                 .accessTokenTimeToLive(Duration.ofHours(1))
                                 .build())

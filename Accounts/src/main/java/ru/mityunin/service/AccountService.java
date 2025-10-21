@@ -73,22 +73,6 @@ public class AccountService {
 
         paymentAccounts.add(account);
 
-        account = new PaymentAccount();
-        account.setCurrency(CurrencyType.CNY);
-        account.setBalance(BigDecimal.ZERO);
-        account.setUser(user);
-        account.setIsDeleted(true);
-
-        paymentAccounts.add(account);
-
-        account = new PaymentAccount();
-        account.setCurrency(CurrencyType.USD);
-        account.setBalance(BigDecimal.ZERO);
-        account.setUser(user);
-        account.setIsDeleted(true);
-
-        paymentAccounts.add(account);
-
         return paymentAccounts;
     }
 

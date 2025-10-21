@@ -14,34 +14,21 @@ import ru.mityunin.dto.CashOperationRequestDto;
 public class CashService {
     private static final Logger log = LoggerFactory.getLogger(CashService.class);
     private final String accountsServiceUrl;
-    private final String blockerServiceUrl;
     private final String apiAccounts;
-    private final String apiBlocker;
     private final AuthenticatedRestTemplateService restTemplateHelper;
 
     public CashService(
             @Value("${service.url.gateway}") String accountsServiceUrl,
-            @Value("${service.url.gateway}") String blockerServiceUrl,
             @Value("${service.api.accounts}") String apiAccounts,
-            @Value("${service.api.blocker}") String apiBlocker,
             AuthenticatedRestTemplateService restTemplateHelper) {
         this.accountsServiceUrl = accountsServiceUrl;
-        this.blockerServiceUrl = blockerServiceUrl;
         this.apiAccounts = apiAccounts;
-        this.apiBlocker = apiBlocker;
         this.restTemplateHelper = restTemplateHelper;
     }
 
     public ApiResponse<Void> processOperation(CashOperationRequestDto cashOperationRequestDto) {
         log.info("cash operation {}", cashOperationRequestDto);
         String accountsUrl = accountsServiceUrl + apiAccounts + "/api/processOperation";
-        String blockerUrl = blockerServiceUrl + apiBlocker + "/api/checkOperation";
-        ApiResponse<Void> suspiciousOperationResponse = restTemplateHelper.postForApiResponse(blockerUrl, cashOperationRequestDto, Void.class);
-        if (suspiciousOperationResponse.isSuccess()) {
-            return restTemplateHelper.postForApiResponse(accountsUrl, cashOperationRequestDto, Void.class);
-        } else  {
-            return suspiciousOperationResponse;
-        }
-
+        return restTemplateHelper.postForApiResponse(accountsUrl, cashOperationRequestDto, Void.class);
     }
 }

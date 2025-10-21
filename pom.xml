@@ -17,9 +17,6 @@
 		<module>Accounts</module>
 		<module>Cash</module>
 		<module>Transfer</module>
-		<module>Exchange</module>
-		<module>ExchangeGenerator</module>
-		<module>Blocker</module>
 		<module>Notifications</module>
 		<module>Common</module>
 		<module>Gateway</module>

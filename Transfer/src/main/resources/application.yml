@@ -35,9 +35,7 @@ service:
     gateway: TEST
   api:
     accounts: "/accounts"
-    exchange: "/exchange"
     notifications: "/notifications"
-    blocker: "/blocker"
 client:
   registration:
     id: "transfer-client"

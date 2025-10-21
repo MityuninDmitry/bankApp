@@ -19,6 +19,9 @@ public class NotificationsService {
     private final String serviceUrl;
     private final AuthenticatedRestTemplateService restTemplateHelper;
 
+    @Value("${service.api.notifications}")
+    private String apiNotifications;
+
     public NotificationsService(
             @Value("${service.url.gateway}") String serviceUrl,
             AuthenticatedRestTemplateService restTemplateHelper) {
@@ -30,7 +33,7 @@ public class NotificationsService {
         NotificationRequestDto requestDto = new NotificationRequestDto();
         requestDto.setLogin(login);
         requestDto.setUsed(false);
-        String url = serviceUrl + "/notifications/api/notifications";
+        String url = serviceUrl + apiNotifications + "/api/notifications";
         ApiResponse<NotificationDto[]> response = restTemplateHelper.postForApiResponse(url, requestDto, NotificationDto[].class);
         return new ApiResponse<>(
                 response.isSuccess(),

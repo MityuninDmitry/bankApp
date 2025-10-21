@@ -35,7 +35,6 @@ service:
     gateway: TEST
   api:
     accounts: "/accounts"
-    blocker: "/blocker"
 
 client:
   registration:

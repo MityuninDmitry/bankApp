@@ -4,7 +4,7 @@ spring:
   application:
     name: service-frontui
   config:
-    import: "consul:"  # Add a spring.config.import=consul: property to your configuration.
+    import: "optional:consul:"  # Add a spring.config.import=consul: property to your configuration.
   cloud:
     consul:
       host: consul          # Адрес Consul (по умолчанию localhost)
@@ -52,6 +52,11 @@ spring:
 service:
   url:
     gateway: TEST
+  api:
+    accounts: "/accounts"
+    cash: "/cash"
+    notifications: "/notifications"
+    transfer: "/transfer"
 client:
   registration:
     id: "frontui-client"
