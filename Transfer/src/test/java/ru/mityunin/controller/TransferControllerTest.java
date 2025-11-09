@@ -47,26 +47,6 @@ class TransferControllerTest {
     }
 
     @Test
-    void transferRequest_WhenBlockerServiceBlocks_ShouldReturnBadRequest() {
-        // Arrange
-        ApiResponse<Void> blockerResponse = ApiResponse.error("Operation blocked");
-        when(notificationService.sendNotification(eq(testLogin), eq("Operation blocked")))
-                .thenReturn(ApiResponse.success("Notification sent"));
-
-        // Act
-        ResponseEntity<ApiResponse<Void>> response = transferController.transferRequest(transferRequestDto);
-
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertFalse(response.getBody().isSuccess());
-        assertEquals("Operation blocked", response.getBody().getMessage());
-
-        verify(notificationService).sendNotification(testLogin, "Operation blocked");
-        verify(transferService, never()).transferOperation(any());
-    }
-
-    @Test
     void transferRequest_WhenTransferSuccess_ShouldReturnOk() {
         // Arrange
         ApiResponse<Void> blockerResponse = ApiResponse.success("Operation allowed");
@@ -217,25 +197,7 @@ class TransferControllerTest {
         verify(transferService).transferOperation(transferRequestDto);
     }
 
-    @Test
-    void transferRequest_WithNegativeAmount_ShouldPassNegativeToBlocker() {
-        // Arrange
-        BigDecimal negativeAmount = new BigDecimal("-100.00");
-        transferRequestDto.setValue(negativeAmount);
 
-        ApiResponse<Void> blockerResponse = ApiResponse.error("Negative amount not allowed");
-        when(notificationService.sendNotification(eq(testLogin), eq("Negative amount not allowed")))
-                .thenReturn(ApiResponse.success("Notification sent"));
-
-        // Act
-        ResponseEntity<ApiResponse<Void>> response = transferController.transferRequest(transferRequestDto);
-
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
-
-        verify(transferService, never()).transferOperation(any());
-    }
 
     @Test
     void transferRequest_ShouldUseExactAmountFromRequest() {

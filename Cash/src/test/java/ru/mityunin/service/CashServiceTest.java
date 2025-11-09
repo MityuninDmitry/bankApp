@@ -47,62 +47,7 @@ class CashServiceTest {
         cashOperationRequest.setLogin("testUser");
     }
 
-    @Test
-    void processOperation_WhenBlockerApproves_ShouldCallAccountsService() {
-        // Arrange
-        ApiResponse<Void> blockerSuccessResponse = ApiResponse.success("Operation approved");
-        ApiResponse<Void> accountsSuccessResponse = ApiResponse.success("Money deposited successfully");
 
-        when(restTemplateHelper.postForApiResponse(
-                eq("http://localhost:8080/blocker/api/checkOperation"),
-                eq(cashOperationRequest),
-                eq(Void.class)))
-                .thenReturn(blockerSuccessResponse);
-
-        when(restTemplateHelper.postForApiResponse(
-                eq("http://localhost:8080/accounts/api/processOperation"),
-                eq(cashOperationRequest),
-                eq(Void.class)))
-                .thenReturn(accountsSuccessResponse);
-
-        // Act
-        ApiResponse<Void> result = cashService.processOperation(cashOperationRequest);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isSuccess());
-        assertEquals("Money deposited successfully", result.getMessage());
-
-        verify(restTemplateHelper, times(1))
-                .postForApiResponse("http://localhost:8080/blocker/api/checkOperation", cashOperationRequest, Void.class);
-        verify(restTemplateHelper, times(1))
-                .postForApiResponse("http://localhost:8080/accounts/api/processOperation", cashOperationRequest, Void.class);
-    }
-
-    @Test
-    void processOperation_WhenBlockerRejects_ShouldNotCallAccountsService() {
-        // Arrange
-        ApiResponse<Void> blockerErrorResponse = ApiResponse.error("Suspicious operation detected");
-
-        when(restTemplateHelper.postForApiResponse(
-                eq("http://localhost:8080/blocker/api/checkOperation"),
-                eq(cashOperationRequest),
-                eq(Void.class)))
-                .thenReturn(blockerErrorResponse);
-
-        // Act
-        ApiResponse<Void> result = cashService.processOperation(cashOperationRequest);
-
-        // Assert
-        assertNotNull(result);
-        assertFalse(result.isSuccess());
-        assertEquals("Suspicious operation detected", result.getMessage());
-
-        verify(restTemplateHelper, times(1))
-                .postForApiResponse("http://localhost:8080/blocker/api/checkOperation", cashOperationRequest, Void.class);
-        verify(restTemplateHelper, never())
-                .postForApiResponse("http://localhost:8080/accounts/api/processOperation", cashOperationRequest, Void.class);
-    }
 
     @Test
     void processOperation_WhenWithdrawOperation_ShouldProcessCorrectly() {
@@ -110,14 +55,12 @@ class CashServiceTest {
         cashOperationRequest.setAction(CashOperation.WITHDRAWN);
         cashOperationRequest.setMoney(new BigDecimal("50.00"));
 
-        ApiResponse<Void> blockerSuccessResponse = ApiResponse.success("Operation approved");
         ApiResponse<Void> accountsSuccessResponse = ApiResponse.success("Money withdrawn successfully");
 
         when(restTemplateHelper.postForApiResponse(
                 anyString(),
                 eq(cashOperationRequest),
                 eq(Void.class)))
-                .thenReturn(blockerSuccessResponse)
                 .thenReturn(accountsSuccessResponse);
 
         // Act

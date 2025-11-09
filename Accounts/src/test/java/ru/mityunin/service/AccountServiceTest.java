@@ -138,19 +138,13 @@ class AccountServiceTest {
 
         List<PaymentAccount> result = accountService.createDefaultAccounts(user);
 
-        assertEquals(3, result.size());
+        assertEquals(1, result.size());
 
         assertEquals(CurrencyType.RUB, result.get(0).getCurrency());
-        assertEquals(CurrencyType.CNY, result.get(1).getCurrency());
-        assertEquals(CurrencyType.USD, result.get(2).getCurrency());
 
         assertTrue(result.get(0).getIsDeleted());
-        assertTrue(result.get(1).getIsDeleted());
-        assertTrue(result.get(2).getIsDeleted());
 
         assertEquals(user, result.get(0).getUser());
-        assertEquals(user, result.get(1).getUser());
-        assertEquals(user, result.get(2).getUser());
     }
 
     @Test

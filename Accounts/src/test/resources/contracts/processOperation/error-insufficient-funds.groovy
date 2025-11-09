@@ -18,13 +18,13 @@ Contract.make {
         ])
     }
     response {
-        status BAD_REQUEST()  // ← Обратите внимание: в контроллере при ошибке возвращается BAD_REQUEST
+        status BAD_REQUEST()
         headers {
             contentType applicationJson()
         }
         body([
                 success: false,
-                message: "Не достаточно денег. На балансе: 1000.00, списывается: 5000.00",  // ← Сообщение может немного отличаться
+                message: "Не достаточно денег. На балансе: 1000.00, списывается: 5000.00",
                 data: null
         ])
     }

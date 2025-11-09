@@ -42,7 +42,7 @@ FROM builder as frontui-builder
 RUN mvn clean package -pl FrontUI -am -DskipTests
 
 # Базовый финальный образ
-FROM openjdk:21-jdk-slim as base
+FROM eclipse-temurin:21-jdk as base
 WORKDIR /app
 EXPOSE ${SERVER_PORT:-8080}
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -31,7 +31,6 @@ public class TransferService {
         log.info("[TransferService] transferOperation {}", transferRequestDto);
         // ссылки на эндпоинты
         String accountsUrl = accountsServiceUrl + apiAccounts + "/api/processOperation";
-
         // операции снятия и внесения в валюте счета
         CashOperationRequest withdrawnOperationRequest = new CashOperationRequest();
         withdrawnOperationRequest.setMoney(transferRequestDto.getValue());

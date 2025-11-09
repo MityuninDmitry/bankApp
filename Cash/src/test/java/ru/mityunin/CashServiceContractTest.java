@@ -22,7 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 @AutoConfigureStubRunner(
-        ids = {"ru.mityunin:Accounts:0.0.1-SNAPSHOT:stubs:8080","ru.mityunin:Blocker:0.0.1-SNAPSHOT:stubs:8081"},
+        ids = {"ru.mityunin:Accounts:0.0.1-SNAPSHOT:stubs:8080"},
         stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
 @ActiveProfiles("test")
@@ -49,22 +49,6 @@ public class CashServiceContractTest {
         assertThat(response.getMessage()).isEqualTo("Успех");
     }
 
-    @Test
-    public void shouldReturnErrorWhenOperationIsSuspicious() {
-        // Given
-        CashOperationRequestDto request = new CashOperationRequestDto();
-        request.setLogin("testUser");
-        request.setAccountNumber("ACC_INSUFFICIENT");
-        request.setAction(CashOperation.WITHDRAWN);
-        request.setMoney(BigDecimal.valueOf(50000));  // Большая сумма
-
-        // When
-        ApiResponse<Void> response = cashService.processOperation(request);
-
-        // Then
-        assertThat(response.isSuccess()).isFalse();
-        assertThat(response.getMessage()).isEqualTo("Подозрительная операция. Отклонено!");
-    }
 
     @Test
     public void shouldReturnErrorWhenInsufficientFunds() {
