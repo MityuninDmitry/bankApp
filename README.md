@@ -26,9 +26,11 @@ docker-compose  up --build
 http://localhost:8081/frontui/home
 
 # Тесты: 
+```
 mvn clean install -pl Common
 mvn clean install -pl Accounts
 mvn clean test -pl Cash
 mvn clean test -pl Transfer
 mvn clean test -pl Notifications
 mvn clean test -pl FrontUI
+```
