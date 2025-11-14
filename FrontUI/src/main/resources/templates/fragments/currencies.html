@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Упрощенные и более надежные стили таблицы */
+    .currency-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-family: Arial, sans-serif;
+      border: 2px solid #333;
+    }
+
+    .currency-table th,
+    .currency-table td {
+      border: 1px solid #333;
+      padding: 8px 12px;
+    }
+
+    .currency-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    }
+
+    .currency-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .currency-table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    #refresh-indicator {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<!-- Блок с информацией о валютах -->
+<div th:fragment="currencies(currencies)">
+  <h3>Exchange Rates</h3>
+
+  <div id="currencies-container">
+    <table class="currency-table">
+      <thead>
+      <tr>
+        <th>Currency</th>
+        <th>Buy Price</th>
+        <th>Sell Price</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="currency : ${currencies}">
+        <td th:text="${currency.currency}"></td>
+        <td class="text-right" th:text="${currency.buyPrice}"></td>
+        <td class="text-right" th:text="${currency.sellPrice}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="refresh-indicator">Last updated: <span id="last-updated"></span></div>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+      // Функция для обновления данных
+      function refreshCurrencies() {
+        fetch('/frontui/home')
+          .then(response => response.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTable = doc.querySelector('.currency-table');
+
+            if (newTable) {
+              document.querySelector('#currencies-container').innerHTML = newTable.outerHTML;
+
+              // Обновляем время последнего обновления
+              const now = new Date();
+              document.getElementById('last-updated').textContent =
+                now.toLocaleTimeString() + ' ' + now.toLocaleDateString();
+            }
+          })
+          .catch(error => console.error('Error refreshing currencies:', error));
+      }
+
+      // Устанавливаем интервал обновления (60 секунд)
+      const refreshInterval = 60000;
+      refreshCurrencies(); // Первая загрузка
+      setInterval(refreshCurrencies, refreshInterval);
+
+      // Инициализация времени
+      const now = new Date();
+      document.getElementById('last-updated').textContent =
+        now.toLocaleTimeString() + ' ' + now.toLocaleDateString();
+    });
+    /*]]>*/
+  </script>
+</div>
+</body>
+</html>

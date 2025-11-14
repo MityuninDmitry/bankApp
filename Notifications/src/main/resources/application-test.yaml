@@ -1,0 +1,54 @@
+spring:
+  # Полностью отключаем security
+  security:
+    enabled: false
+    oauth2:
+      client:
+        enabled: false
+        registration:
+          notifications-client:
+            enabled: false
+      resourceserver:
+        enabled: false
+
+  cloud:
+    consul:
+      enabled: false  # Полностью отключаем Consul
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+    config:
+      import: ""
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: notifications
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+security:
+  oauth2:
+    enabled: false
+
+resilience4j:
+  enabled: false

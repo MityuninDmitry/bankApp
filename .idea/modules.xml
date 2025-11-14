@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Blocker.iml" filepath="$PROJECT_DIR$/Blocker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Exchange.iml" filepath="$PROJECT_DIR$/Exchange.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ExchangeGenerator.iml" filepath="$PROJECT_DIR$/ExchangeGenerator.iml" />
+    </modules>
+  </component>
+</project>

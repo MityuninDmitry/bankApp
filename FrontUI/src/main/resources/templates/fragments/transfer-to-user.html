@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    .transfer-to-user-container {
+        margin: 20px 0;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .transfer-to-user-title {
+        margin-top: 0;
+        color: #333;
+    }
+    .transfer-to-user-form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+    }
+    .transfer-to-user-account-select {
+        flex: 1;
+        min-width: 200px;
+    }
+    .transfer-to-user-amount {
+        flex: 0 0 150px;
+    }
+    .transfer-to-user-btn {
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .transfer-to-user-btn:hover {
+        background-color: #0b7dda;
+    }
+    .transfer-to-user-select, .transfer-to-user-input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+    }
+    .transfer-to-user-error {
+        color: red;
+        margin-top: 10px;
+    }
+    .transfer-to-user-hidden {
+        display: none;
+    }
+    .transfer-to-user-loading {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<!-- Фрагмент для перевода денег другому пользователю -->
+<div th:fragment="transferToUser(userDto, allUsers)" th:if="${userDto != null and userDto.paymentAccounts != null}">
+  <div class="transfer-to-user-container">
+    <h3 class="transfer-to-user-title">Transfer to Another User</h3>
+
+    <!-- Сообщения об ошибках -->
+    <div id="transferToUserError" class="transfer-to-user-error" th:if="${transferToUserError}" th:text="${transferToUserError}"></div>
+
+    <!-- Основная форма для перевода денег -->
+    <form th:action="@{/frontui/transfer/transferToUser}" method="post" class="transfer-to-user-form" id="transferToUserForm">
+      <!-- Счет отправителя (текущий пользователь) -->
+      <div class="transfer-to-user-account-select">
+        <label for="transferToUserAccountFrom">From Account:</label>
+        <select id="transferToUserAccountFrom" name="accountNumberFrom" class="transfer-to-user-select" required>
+          <option value="">Select your account</option>
+          <option th:each="account : ${userDto.paymentAccounts}"
+                  th:if="${account.isDeleted == null or !account.isDeleted}"
+                  th:value="${account.accountNumber}"
+                  th:text="${account.accountNumber + ' (' + account.currency + ') - ' + #numbers.formatDecimal(account.balance, 1, 2)}">
+          </option>
+        </select>
+      </div>
+
+      <!-- Выбор пользователя -->
+      <div class="transfer-to-user-account-select">
+        <label for="transferToUserLogin">To User:</label>
+        <select id="transferToUserLogin" class="transfer-to-user-select" required onchange="transferToUserLoadRecipientAccounts(this.value)">
+          <option value="">Select user</option>
+          <option th:each="user : ${allUsers}"
+                  th:value="${user.login}"
+                  th:text="${user.login + (user.firstName != null ? ' (' + user.firstName : '') + (user.lastName != null ? ' ' + user.lastName : '') + (user.firstName != null ? ')' : '')}">
+          </option>
+        </select>
+      </div>
+
+      <!-- Счет получателя (другой пользователь) -->
+      <div class="transfer-to-user-account-select transfer-to-user-hidden" id="transferToUserRecipientAccountSection">
+        <label for="transferToUserAccountTo">To Account:</label>
+        <select id="transferToUserAccountTo" name="accountNumberTo" class="transfer-to-user-select" required disabled>
+          <option value="">Select recipient account</option>
+        </select>
+      </div>
+
+      <!-- Сумма перевода -->
+      <div class="transfer-to-user-amount transfer-to-user-hidden" id="transferToUserAmountSection">
+        <label for="transferToUserValue">Amount:</label>
+        <input type="number" id="transferToUserValue" name="value" class="transfer-to-user-input" step="0.01" min="0.01" required disabled>
+      </div>
+      <input type="hidden" name="login" th:value="${userDto.login}">
+      <!-- Кнопка перевода -->
+      <div class="transfer-to-user-hidden" id="transferToUserSubmitSection">
+        <button type="submit" class="transfer-to-user-btn">Transfer Money</button>
+      </div>
+    </form>
+  </div>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    function transferToUserShowSection(sectionId, show) {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      if (show) {
+        section.classList.remove('transfer-to-user-hidden');
+        const input = section.querySelector('select, input');
+        if (input) input.disabled = false;
+      } else {
+        section.classList.add('transfer-to-user-hidden');
+        const input = section.querySelector('select, input');
+        if (input) input.disabled = true;
+      }
+    }
+
+    function transferToUserResetForm() {
+      const select = document.getElementById('transferToUserAccountTo');
+      if (select) select.innerHTML = '<option value="">Select recipient account</option>';
+
+      const input = document.getElementById('transferToUserValue');
+      if (input) input.value = '';
+
+      transferToUserShowSection('transferToUserRecipientAccountSection', false);
+      transferToUserShowSection('transferToUserAmountSection', false);
+      transferToUserShowSection('transferToUserSubmitSection', false);
+    }
+
+    function transferToUserShowError(message) {
+      const errorDiv = document.getElementById('transferToUserError');
+      if (!errorDiv) return;
+
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    function transferToUserClearError() {
+      const errorDiv = document.getElementById('transferToUserError');
+      if (errorDiv) errorDiv.style.display = 'none';
+    }
+
+    function transferToUserLoadRecipientAccounts(login) {
+      transferToUserClearError();
+      transferToUserResetForm();
+
+      if (!login) return;
+
+      // Проверка на перевод самому себе
+      const currentUser = /*[[${userDto?.login}]]*/ null;
+      if (currentUser && currentUser === login) {
+        transferToUserShowError("You cannot transfer money to yourself");
+        const select = document.getElementById('transferToUserLogin');
+        if (select) select.value = '';
+        return;
+      }
+
+      // Показываем состояние загрузки
+      const userSelect = document.getElementById('transferToUserLogin');
+      if (userSelect) userSelect.classList.add('transfer-to-user-loading');
+
+      fetch('/frontui/accounts/paymentAccountsByLogin?login=' + encodeURIComponent(login))
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          if (!data.success) {
+            throw new Error(data.message || 'Failed to load accounts');
+          }
+
+          const select = document.getElementById('transferToUserAccountTo');
+          if (select) {
+            select.innerHTML = '<option value="">Select recipient account</option>';
+
+            // Фильтруем только не удаленные счета
+            const activeAccounts = data.data.filter(account =>
+              account.isDeleted === null || !account.isDeleted
+            );
+
+            if (activeAccounts.length === 0) {
+              throw new Error('Recipient has no active accounts');
+            }
+
+            activeAccounts.forEach(account => {
+              const option = document.createElement('option');
+              option.value = account.accountNumber;
+              option.textContent = account.accountNumber + ' (' + account.currency + ')';
+              select.appendChild(option);
+            });
+          }
+
+          // Показываем остальные элементы формы
+          transferToUserShowSection('transferToUserRecipientAccountSection', true);
+          transferToUserShowSection('transferToUserAmountSection', true);
+          transferToUserShowSection('transferToUserSubmitSection', true);
+        })
+        .catch(error => {
+          transferToUserShowError(error.message);
+          console.error('Error:', error);
+        })
+        .finally(() => {
+          if (userSelect) userSelect.classList.remove('transfer-to-user-loading');
+        });
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+      // Очищаем возможные старые данные
+      transferToUserResetForm();
+    });
+    /*]]>*/
+  </script>
+</div>
+</body>
+</html>

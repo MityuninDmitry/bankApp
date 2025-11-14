@@ -1,0 +1,88 @@
+server:
+  port: ${SERVER_PORT:8082}
+spring:
+  application:
+    name: service-accounts
+  config:
+    import: "optional:consul:" # Add a spring.config.import=consul: property to your configuration.
+  cloud:
+    consul:
+      host: consul          # Адрес Consul (по умолчанию localhost)
+      port: 8500               # Порт Consul (8500 по умолчанию)
+      discovery:
+        service-name: service-accounts  # Необязательно, по умолчанию берётся spring.application.name
+        instance-id: ${spring.application.name}:${random.value}
+      config:
+        enabled: true            # Включаем Consul Config для внешней конфигурации
+        data-key: data
+        format: PROPERTIES
+        prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
+        defaultContext: application  # Контекст по умолчанию
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: accounts
+        format_sql: true
+        hbm2ddl.schema-generation.scripts.action: create
+        hbm2ddl.schema-generation.scripts.create-target: init.sql
+        hbm2ddl.schema-generation.scripts.create-source: metadata
+  security:
+    oauth2:
+      client:
+        registration:
+          accounts-client:
+            provider: spring
+            client-id: accounts-service
+            client-secret: accounts-secret
+            authorization-grant-type: client_credentials
+            scope: accounts
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, env, metrics, beans, conditions, configprops
+  endpoint:
+    health:
+      show-details: always
+    env:
+      enabled: true
+      show-values: ALWAYS
+    beans:
+      enabled: true
+    metrics:
+      enabled: true
+
+service:
+  url:
+    gateway: TEST # http://service-gateway # http://service-notifications # http://notifications-service:8088
+  api:
+    notifications: "/notifications"
+
+client:
+  registration:
+    id: "accounts-client"
+logging:
+  level:
+    root: INFO
+  org:
+    org.springframework.web.servlet.mvc: INFO
+    org.springframework.web.servlet.handler: INFO
+    org.springframework.web.servlet.resource: INFO
+
+security:
+  oauth2:
+    enabled: true
+
+resilience4j:
+  enabled: true

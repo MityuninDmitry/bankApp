@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT:9000}
+spring:
+  application:
+    name: service-auth
+  config:
+    import: "consul:"  # Add a spring.config.import=consul: property to your configuration.
+  cloud:
+    consul:
+      host: consul          # Адрес Consul (по умолчанию localhost)
+      port: 8500               # Порт Consul (8500 по умолчанию)
+      discovery:
+        service-name: service-auth  # Необязательно, по умолчанию берётся spring.application.name
+        health-check-path: /actuator/health
+        health-check-interval: 30s
+      config:
+        enabled: true            # Включаем Consul Config для внешней конфигурации
+        data-key: data
+        format: PROPERTIES
+        prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
+        defaultContext: application  # Контекст по умолчанию
+
+logging:
+  level:
+    org.springframework.security: INFO
+    ru.mityunin: DEBUG

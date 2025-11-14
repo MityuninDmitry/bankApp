@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    .transfer-container {
+        margin: 20px 0;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .transfer-title {
+        margin-top: 0;
+        color: #333;
+    }
+    .transfer-form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+    }
+    .account-select {
+        flex: 1;
+        min-width: 200px;
+    }
+    .transfer-amount {
+        flex: 0 0 150px;
+    }
+    .transfer-btn {
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .transfer-btn:hover {
+        background-color: #0b7dda;
+    }
+    select, input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+    }
+    .error-message {
+        color: red;
+        margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<!-- Фрагмент для перевода денег между счетами -->
+<div th:fragment="transferMoney(userDto)" th:if="${userDto != null and userDto.paymentAccounts != null}">
+  <div class="transfer-container">
+    <h3 class="transfer-title">Transfer Between Accounts</h3>
+
+    <!-- Сообщения об ошибках -->
+    <div th:if="${transferError}" class="error-message">
+      <span th:text="${transferError}"></span>
+    </div>
+
+    <form th:action="@{/frontui/transfer/transferRequest}" method="post" class="transfer-form">
+      <!-- Счет отправителя -->
+      <div class="account-select">
+        <label for="accountNumberFrom">From Account:</label>
+        <select id="accountNumberFrom" name="accountNumberFrom" required>
+          <option value="">Select account</option>
+          <option th:each="account : ${userDto.paymentAccounts}"
+                  th:if="${account.isDeleted == null or !account.isDeleted}"
+                  th:value="${account.accountNumber}"
+                  th:text="${account.accountNumber + ' (' + account.currency + ') - ' + #numbers.formatDecimal(account.balance, 1, 2)}">
+          </option>
+        </select>
+      </div>
+
+      <!-- Счет получателя -->
+      <div class="account-select">
+        <label for="accountNumberTo">To Account:</label>
+        <select id="accountNumberTo" name="accountNumberTo" required>
+          <option value="">Select account</option>
+          <option th:each="account : ${userDto.paymentAccounts}"
+                  th:if="${account.isDeleted == null or !account.isDeleted}"
+                  th:value="${account.accountNumber}"
+                  th:text="${account.accountNumber + ' (' + account.currency + ') - ' + #numbers.formatDecimal(account.balance, 1, 2)}">
+          </option>
+        </select>
+      </div>
+
+      <!-- Сумма перевода -->
+      <div class="transfer-amount">
+        <label for="value">Amount:</label>
+        <input type="number" id="value" name="value" step="0.01" min="0.01" required>
+      </div>
+      <input type="hidden" name="login" th:value="${userDto.login}">
+      <!-- Кнопка перевода -->
+      <div>
+        <button type="submit" class="transfer-btn">Transfer Money</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

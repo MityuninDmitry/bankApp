@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+<body>
+<h2>Login</h2>
+<form th:action="@{/frontui/perform_login}" method="post">
+  <div th:if="${param.error}" style="color: red;">
+    Invalid username or password
+  </div>
+  <div>
+    <label>Login: <input type="text" name="username" required/></label>
+  </div>
+  <div>
+    <label>Password: <input type="password" name="password" required/></label>
+  </div>
+  <div>
+    <input type="submit" value="Sign In"/>
+  </div>
+</form>
+<p>Нет аккаунта? <a href="/frontui/accounts/register">Register</a></p>
+</body>
+</html>

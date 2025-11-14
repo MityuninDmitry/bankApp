@@ -1,0 +1,180 @@
+services:
+  consul:
+    image: hashicorp/consul:latest
+    ports:
+      - "8500:8500"
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0 -data-dir=/consul/data
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+      CONSUL_LOCAL_CONFIG: '{
+          "datacenter": "dc1",
+          "node_name": "consul-server",
+          "server": true,
+          "bootstrap_expect": 1,
+          "log_level": "ERROR"
+        }'
+    volumes:
+      - consul_data:/consul/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8500/v1/status/leader" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontui-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontui-service
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: 8081
+    depends_on:
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  accounts-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: accounts-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts?currentSchema=accounts
+      SPRING_DATASOURCE_USERNAME: accounts_user
+      SPRING_DATASOURCE_PASSWORD: accounts_password
+      SERVER_PORT: 8082
+    depends_on:
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8082/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  cash-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: cash-service
+    ports:
+      - "8083:8083"
+    environment:
+      SERVER_PORT: 8083
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  transfer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: transfer-service
+    ports:
+      - "8084:8084"
+    environment:
+      SERVER_PORT: 8084
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8084/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  notifications-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: notifications-service
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts?currentSchema=notifications
+      SPRING_DATASOURCE_USERNAME: accounts_user
+      SPRING_DATASOURCE_PASSWORD: accounts_password
+      SERVER_PORT: 8088
+    depends_on:
+      accounts-db:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8088/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  gateway-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: gateway-service
+    ports:
+      - "8089:8089"
+    environment:
+      SERVER_PORT: 8089
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8089/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: auth-service
+    ports:
+      - "9000:9000"
+    environment:
+      SERVER_PORT: 9000
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  accounts-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: accounts
+      POSTGRES_USER: accounts_user
+      POSTGRES_PASSWORD: accounts_password
+    ports:
+      - "5433:5432"
+    volumes:
+      #- pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U accounts_user -d accounts" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:
+  consul_data:

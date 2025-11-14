@@ -1,0 +1,15 @@
+.git
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/.gitignore
+**/README.md
+**/HELP.md
+**/*.iml
+**/.idea/
+**/.classpath
+**/.project
+**/.settings/
+**/bin/
+**/.vscode/

@@ -1,0 +1,44 @@
+server:
+  port: ${SERVER_PORT:8083}
+spring:
+  application:
+    name: service-cash
+  config:
+    import: "optional:consul:" # Add a spring.config.import=consul: property to your configuration.
+  cloud:
+    consul:
+      host: consul          # Адрес Consul (по умолчанию localhost)
+      port: 8500               # Порт Consul (8500 по умолчанию)
+      discovery:
+        service-name: service-cash  # Необязательно, по умолчанию берётся spring.application.name
+      config:
+        enabled: true            # Включаем Consul Config для внешней конфигурации
+        data-key: data
+        format: PROPERTIES
+        prefix: config           # Префикс в KV-хранилище Consul (по умолчанию "config")
+        defaultContext: application  # Контекст по умолчанию
+  security:
+    oauth2:
+      client:
+        registration:
+          cash-client:
+            provider: spring
+            client-id: cash-service
+            client-secret: cash-secret
+            authorization-grant-type: client_credentials
+            scope: cash
+        provider:
+          spring:
+            token-uri: http://auth-service:9000/oauth2/token
+service:
+  url:
+    gateway: TEST
+  api:
+    accounts: "/accounts"
+
+client:
+  registration:
+    id: "cash-client"
+logging:
+  level:
+    ru.mityunin: INFO

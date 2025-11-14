@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .delete-account-btn {
+      padding: 5px 10px;
+      background: none;
+      border: 1px solid #ff4444;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #ff4444;
+      transition: all 0.3s;
+    }
+    .delete-account-btn:hover {
+      background: #ff4444;
+      color: white;
+    }
+    tr {
+      transition: all 0.3s ease;
+    }
+    .deleted-row {
+      opacity: 0.5;
+    }
+    .deleted-btn {
+      background: #ff4444 !important;
+      color: white !important;
+      cursor: not-allowed;
+    }
+    .error-message {
+        color: red;
+        margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<!-- Блок с информацией о пользователе -->
+<div th:fragment="userProfile(userDto)" th:if="${userDto != null}" style="border: 1px solid black; padding: 10px; margin: 10px 0;">
+  <h3>User Profile</h3>
+  <p>
+    <strong>Login:</strong>
+    <span th:text="${userDto.login}"></span>
+    <!-- Сообщения об ошибках -->
+  <div th:if="${deleteUserError}" class="error-message">
+    <span th:text="${deleteUserError}"></span>
+  </div>
+  <form th:action="@{/frontui/accounts/delete}" method="post" style="display: inline;">
+    <button type="submit" style="margin-left: 10px; color: white; background-color: #f44336; border: none; padding: 2px 5px; border-radius: 3px; cursor: pointer;">
+      Delete Account
+    </button>
+  </form>
+  </p>
+
+  <!-- Форма для изменения информации пользователя -->
+  <div style="margin-top: 20px;">
+    <h4>Edit Profile Information</h4>
+    <form th:action="@{/frontui/accounts/update/userInfo}" method="post">
+      <input type="hidden" name="login" th:value="${userDto.login}">
+
+      <div style="margin-bottom: 10px;">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" th:value="${userDto.firstName}"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" th:value="${userDto.lastName}"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:value="${userDto.email}"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="birthDate">Birth Date (yyyy-MM-dd):</label>
+        <input type="date" id="birthDate" name="birthDate"
+               th:value="${userDto.birthDate != null} ? ${#temporals.format(userDto.birthDate, 'yyyy-MM-dd')} : ''"
+               style="padding: 5px; width: 200px;">
+      </div>
+
+      <button type="submit" style="color: white; background-color: #4CAF50; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+        Update Profile
+      </button>
+
+      <span th:if="${userInfoUpdated}" style="color: green; margin-left: 10px;">Profile updated successfully!</span>
+      <span th:if="${userInfoUpdatedError}" style="color: red; margin-left: 10px;" th:text="${userInfoUpdatedError}"></span>
+    </form>
+  </div>
+
+  <!-- Секция для счетов -->
+  <div style="margin: 20px 0; border-top: 1px solid #eee; padding-top: 10px;">
+    <h4>Payment Accounts</h4>
+    <div th:if="${accountDeletionError}" style="color: red; margin-bottom: 10px;">
+      <span th:text="${accountDeletionError}"></span>
+    </div>
+    <div th:if="${userDto.paymentAccounts != null}">
+      <table id="accountsTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+        <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th>Account Number</th>
+          <th>Currency</th>
+          <th>Balance</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account, iterStat : ${userDto.paymentAccounts}"
+            th:if="${account.isDeleted == null || !account.isDeleted}"
+            th:data-account-number="${account.accountNumber}"
+            th:class="${account.isDeleted != null && account.isDeleted} ? 'deleted-row' : ''">
+
+          <td>
+            <span th:text="${account.accountNumber}"></span>
+          </td>
+
+          <td>
+            <span th:text="${account.currency}"></span>
+          </td>
+
+          <td style="text-align: right;">
+            <span th:text="${#numbers.formatDecimal(account.balance, 1, 2)}"></span>
+          </td>
+
+          <td style="text-align: center;">
+            <!-- Отдельная форма для удаления счета (не вложенная) -->
+            <form th:action="@{/frontui/accounts/update/userInfo/deleteAccount}" method="post" style="display: inline;">
+              <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
+              <button type="submit"
+                      class="delete-account-btn"
+                      th:classappend="${account.isDeleted != null && account.isDeleted} ? 'deleted-btn' : ''"
+                      th:disabled="${account.isDeleted != null && account.isDeleted}">
+                <i class="fas" th:class="${account.isDeleted != null && account.isDeleted} ? 'fa-check' : 'fa-trash-alt'"></i>
+                <span th:text="${account.isDeleted != null && account.isDeleted} ? ' Удалено' : ' Удалить счет'"></span>
+              </button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Секция для удаленных счетов (для восстановления) -->
+  <div style="margin: 20px 0; border-top: 1px solid #eee; padding-top: 10px;"
+       th:if="${userDto.paymentAccounts.?[isDeleted == true].size() > 0}">
+    <h4>Accounts for Adding</h4>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+      <thead>
+      <tr style="background-color: #f2f2f2;">
+        <th>Account Number</th>
+        <th>Currency</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="account : ${userDto.paymentAccounts}"
+          th:if="${account.isDeleted != null && account.isDeleted}">
+        <td>
+          <span th:text="${account.accountNumber}"></span>
+        </td>
+        <td>
+          <span th:text="${account.currency}"></span>
+        </td>
+        <td style="text-align: center;">
+          <form th:action="@{/frontui/accounts/update/userInfo/addAccount}" method="post" style="display: inline;">
+            <input type="hidden" name="accountNumber" th:value="${account.accountNumber}">
+            <button type="submit"
+                    style="padding: 5px 10px; background-color: #4CAF50; border: none;
+                                   border-radius: 4px; cursor: pointer; color: white;">
+              <i class="fas fa-plus"></i> Add
+            </button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Форма для изменения пароля -->
+  <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
+    <h4>Change Password</h4>
+    <form th:action="@{/frontui/accounts/update/password}" method="post">
+      <input type="hidden" name="login" th:value="${userDto.login}">
+      <div style="margin-bottom: 10px;">
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required style="padding: 5px; width: 200px;">
+      </div>
+      <button type="submit" style="color: white; background-color: #4CAF50; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+        Update Password
+      </button>
+      <span th:if="${passwordUpdated}" style="color: green; margin-left: 10px;">Password updated successfully!</span>
+      <span th:if="${passwordError}" style="color: red; margin-left: 10px;" th:text="${passwordError}"></span>
+    </form>
+  </div>
+</div>
+
+<div th:fragment="notAuthenticated" th:if="${userDto == null}">
+  <p>Please <a href="/frontui/login">log in</a> to view your profile.</p>
+</div>
+</body>
+</html>

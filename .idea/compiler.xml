@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for Common" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="Common" />
+      </profile>
+      <profile name="Annotation profile for bankApp" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="FrontUI" />
+        <module name="Gateway" />
+        <module name="Auth" />
+        <module name="Transfer" />
+        <module name="Cash" />
+        <module name="Notifications" />
+        <module name="Accounts" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Blocker" target="21" />
+      <module name="Exchange" target="21" />
+      <module name="ExchangeGenerator" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Accounts" options="-parameters" />
+      <module name="Auth" options="-parameters" />
+      <module name="Blocker" options="-parameters" />
+      <module name="Cash" options="-parameters" />
+      <module name="Common" options="-parameters" />
+      <module name="Exchange" options="-parameters" />
+      <module name="ExchangeGenerator" options="-parameters" />
+      <module name="FrontUI" options="-parameters" />
+      <module name="Gateway" options="-parameters" />
+      <module name="Notifications" options="-parameters" />
+      <module name="Transfer" options="-parameters" />
+      <module name="bankApp" options="-parameters" />
+    </option>
+  </component>
+</project>
